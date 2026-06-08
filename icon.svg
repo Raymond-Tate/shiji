@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- 背景渐变：高调版米白金属质感 -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f2efea"/>
+      <stop offset="50%" stop-color="#ebe7e1"/>
+      <stop offset="100%" stop-color="#e0dcd4"/>
+    </linearGradient>
+    <!-- 外圈金属环 -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d8d4cc"/>
+      <stop offset="50%" stop-color="#c8c4ba"/>
+      <stop offset="100%" stop-color="#b8b4aa"/>
+    </linearGradient>
+    <!-- 内圈浅色 -->
+    <radialGradient id="innerGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f2efe8"/>
+      <stop offset="100%" stop-color="#e0dcd4"/>
+    </radialGradient>
+    <!-- 橙色Accent光晕 -->
+    <radialGradient id="ledGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6b44" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#e84a2a" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#e84a2a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- 阴影滤镜 -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.18"/>
+    </filter>
+    <!-- 文字发光（深色文字用浅色光晕） -->
+    <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 圆角方形背景 -->
+  <rect x="16" y="16" width="480" height="480" rx="112" ry="112" fill="url(#bgGrad)" filter="url(#shadow)"/>
+
+  <!-- 内边框（浅色背景用深色描边） -->
+  <rect x="20" y="20" width="472" height="472" rx="108" ry="108" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2"/>
+  <rect x="18" y="18" width="476" height="476" rx="110" ry="110" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="3"/>
+
+  <!-- 中心圆形表盘 -->
+  <circle cx="256" cy="256" r="168" fill="url(#ringGrad)"/>
+  <circle cx="256" cy="256" r="160" fill="url(#innerGrad)"/>
+
+  <!-- 表盘刻度线（12条） -->
+  <g stroke="#a09c94" stroke-width="3" stroke-linecap="round">
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(0 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(30 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(60 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(90 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(120 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(150 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(180 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(210 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(240 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(270 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(300 256 256)"/>
+    <line x1="256" y1="108" x2="256" y2="124" transform="rotate(330 256 256)"/>
+  </g>
+
+  <!-- 橙色Accent进度弧（模拟倒计时环） -->
+  <circle cx="256" cy="256" r="152" fill="none" stroke="#e84a2a" stroke-width="5" stroke-linecap="round"
+    stroke-dasharray="715" stroke-dashoffset="180" opacity="0.9"
+    transform="rotate(-90 256 256)"/>
+
+  <!-- 橙色Accent LED光晕 -->
+  <circle cx="400" cy="112" r="28" fill="url(#ledGlow)" opacity="0.6"/>
+  <circle cx="400" cy="112" r="10" fill="#ff6b44"/>
+  <circle cx="400" cy="112" r="4" fill="#ffd8cc"/>
+
+  <!-- 文字 "时肌" -->
+  <text x="256" y="282" text-anchor="middle" alignment-baseline="middle"
+    font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif"
+    font-size="96" font-weight="700" fill="#2a2824"
+    filter="url(#textGlow)">时<tspan dx="12">肌</tspan></text>
+
+  <!-- 底部小字 TAGLINE -->
+  <text x="256" y="352" text-anchor="middle" alignment-baseline="middle"
+    font-family="PingFang SC, Microsoft YaHei, sans-serif"
+    font-size="20" font-weight="500" fill="#6a6660" opacity="0.85">FITNESS<tspan dx="8">TIMER</tspan></text>
+</svg>

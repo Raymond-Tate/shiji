@@ -1,0 +1,3250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>时肌 — 健身计时器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════?     CSS Custom Properties
+     ══════════════════════════════════════════*/
+  :root {
+    --font-hei: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Source Han Sans SC", "Heiti SC", sans-serif;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dial-size: 232px;
+  }
+
+  /* LOW-KEY */
+  [data-theme="low"] {
+    --bg-page: #0d0d10;
+    --bg-page-tex1: rgba(40,40,44,0.4);
+    --bg-page-tex2: rgba(20,20,24,0.8);
+    --device-top: #3c3c40; --device-mid: #26262a; --device-bot: #2a2a2e;
+    --device-rim: #3a3a3e; --device-inner: #1e1e22;
+    --device-highlight: rgba(255,255,255,0.05);
+    --display-bg: #1e1e20; --display-border: #1a1a1c;
+    --bezel-outer1: #4e4e52; --bezel-outer2: #353538; --bezel-outer3: #2a2a2e;
+    --bezel-inner1: #1a1a1c; --bezel-inner2: #2e2e32;
+    --dial-face: radial-gradient(circle at 50% 40%, #2a2a2e 0%, #1a1a1c 100%);
+    --dial-border: #252528;
+    --glass-grad1: rgba(255,255,255,0.06);
+    --glass-grad2: rgba(255,255,255,0.01);
+    --glass-grad3: rgba(255,255,255,0.03);
+    --tick-color: #5a5a5e; --tick-major: #8a8a8e;
+    --text-primary: #e4e4e4; --text-secondary: #a0a0a4; --text-dim: #6a6a6e;
+    --accent: #e84a2a; --accent-glow: rgba(232,74,42,0.5);
+    --green: #5cb85c; --rest: #3a8fe8;
+    --btn-gradient1: #505054; --btn-gradient2: #404044;
+    --btn-shadow-base: #252528; --btn-text: #e4e4e4;
+    --btn-start-top: #ff6b44; --btn-start-mid: #e84a2a; --btn-start-bot: #c93a1a;
+    --btn-start-shadow: #7a2810; --btn-start-text: #fff;
+    --shadow-outer: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+    --shadow-inner: inset 0 2px 8px rgba(0,0,0,0.5), inset 0 -1px 2px rgba(255,255,255,0.05);
+    --toggle-track: #2a2a2e; --toggle-thumb: #5a5a5e;
+    --overlay-bg: rgba(20,20,22,0.92);
+    --card-hover: #252528;
+    --tag-bg: #2a2a2e; --tag-border: #353538;
+    --cal-day-bg: #1a1a1e; --cal-day-hover: #25252a;
+    --cal-today-ring: #e84a2a;
+    --cal-done-dot: #4CAF50; --cal-plan-dot: #ff9800;
+    --day-detail-bg: #16161a;
+  }
+
+  /* HIGH-KEY */
+  [data-theme="high"] {
+    --bg-page: #d5d0c8;
+    --bg-page-tex1: rgba(200,195,185,0.4);
+    --bg-page-tex2: rgba(180,175,165,0.6);
+    --device-top: #f2efea; --device-mid: #ebe7e1; --device-bot: #e8e4de;
+    --device-rim: #d8d4cc; --device-inner: #c8c4bc;
+    --device-highlight: rgba(255,255,255,0.5);
+    --display-bg: #e8e4de; --display-border: #d0ccc4;
+    --bezel-outer1: #b8b4aa; --bezel-outer2: #d0ccc4; --bezel-outer3: #c8c4ba;
+    --bezel-inner1: #9a968c; --bezel-inner2: #c0bcb2;
+    --dial-face: radial-gradient(circle at 50% 40%, #f2efe8 0%, #e0dcd4 100%);
+    --dial-border: #d0ccc4;
+    --glass-grad1: rgba(255,255,255,0.3);
+    --glass-grad2: rgba(255,255,255,0.02);
+    --glass-grad3: rgba(255,255,255,0.15);
+    --tick-color: #a09c94; --tick-major: #7a7670;
+    --text-primary: #2a2824; --text-secondary: #6a6660; --text-dim: #9a9690;
+    --accent: #e84a2a; --accent-glow: rgba(232,74,42,0.35);
+    --green: #4a9a4a; --rest: #3a7fd8;
+    --btn-gradient1: #d8d4cc; --btn-gradient2: #c8c4ba;
+    --btn-shadow-base: #a8a49a; --btn-text: #2a2824;
+    --btn-start-top: #ff6b44; --btn-start-mid: #e84a2a; --btn-start-bot: #c93a1a;
+    --btn-start-shadow: #7a2810; --btn-start-text: #fff;
+    --shadow-outer: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-inner: inset 0 2px 6px rgba(0,0,0,0.1), inset 0 -1px 2px rgba(255,255,255,0.4);
+    --toggle-track: #d0ccc4; --toggle-thumb: #f2efea;
+    --overlay-bg: rgba(240,237,232,0.94);
+    --card-hover: #f2efe8;
+    --tag-bg: #d8d4cc; --tag-border: #c8c4ba;
+    --cal-day-bg: #f2efe8; --cal-day-hover: #e0dcd4;
+    --cal-today-ring: #e84a2a;
+    --cal-done-dot: #4a9a4a; --cal-plan-dot: #f0a040;
+    --day-detail-bg: #e0dcd4;
+  }
+
+  /* ═══════════════════════════════════════════?     RESET & BASE
+     ══════════════════════════════════════════*/
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { height: 100%; -ms-overflow-style: none; scrollbar-width: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: none; }
+  *::-webkit-scrollbar { display: none; }
+  body {
+    height: 100%;
+    background: var(--bg-page);
+    display: flex; justify-content: center; align-items: center;
+    font-family: var(--font-hei);
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse at 50% 30%, var(--bg-page-tex1) 0%, transparent 70%),
+      radial-gradient(ellipse at 50% 100%, var(--bg-page-tex2) 0%, transparent 60%);
+    transition: background 0.5s var(--ease-out-expo);
+    overflow: hidden;
+  }
+
+  /* ═══════════════════════════════════════════?     DEVICE SHELL
+     ══════════════════════════════════════════*/
+  .device {
+    position: relative;
+    width: 460px; max-width: 100%;
+    height: 100dvh; max-height: 820px; min-height: 680px;
+    background: linear-gradient(180deg,
+      var(--device-top) 0%, var(--device-mid) 3%,
+      var(--device-mid) 50%, var(--device-bot) 97%, var(--device-rim) 100%);
+    border-radius: 32px;
+    box-shadow:
+      0 0 0 2px var(--device-inner), 0 0 0 4px var(--device-rim),
+      0 0 0 5px var(--device-inner), var(--shadow-outer),
+      inset 0 1px 0 var(--device-highlight), inset 0 -1px 0 rgba(0,0,0,0.15);
+    padding: env(safe-area-inset-top, 28px) 32px env(safe-area-inset-bottom, 32px);
+    display: flex; flex-direction: column; overflow: hidden;
+    transition: all 0.5s var(--ease-out-expo);
+  }
+  .device::before {
+    content: ''; position: absolute; top: -1px; left: 50%;
+    transform: translateX(-50%); width: 140px; height: 4px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent), transparent);
+    border-radius: 0 0 4px 4px; opacity: 0.85; z-index: 100;
+    transition: opacity 0.5s, background 0.5s;
+  }
+  .device::after {
+    content: ''; position: absolute; inset: 0; border-radius: 32px;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px,
+      rgba(128,128,128,0.015) 3px, rgba(128,128,128,0.015) 6px);
+    pointer-events: none; z-index: 1;
+  }
+
+  /* ═══════════════════════════════════════════?     TOP BAR
+     ══════════════════════════════════════════*/
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0; margin-bottom: 16px; position: relative; z-index: 5;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand-mark { flex-shrink: 0; color: var(--accent); transition: color 0.5s; }
+  .brand { cursor: pointer; }
+  .brand-name { font-size: 0.9375rem; font-weight: 700; letter-spacing: 0.12em; color: var(--text-secondary); transition: color 0.5s; }
+  .brand:hover .brand-name { color: var(--accent); }
+  .brand:active { transform: scale(0.96); }
+  .brand-model { font-size: 0.6250rem; color: var(--text-dim); letter-spacing: 0.18em; transition: color 0.5s; }
+
+  .theme-toggle {
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+    user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .theme-icon {
+    width: 18px; height: 18px; color: var(--text-dim);
+    transition: color 0.5s, opacity 0.35s, transform 0.35s;
+    opacity: 0.4;
+  }
+  [data-theme="low"] .moon-icon { color: var(--accent); opacity: 1; transform: scale(1.1); }
+  [data-theme="low"] .sun-icon { opacity: 0.25; }
+  [data-theme="high"] .sun-icon { color: var(--accent); opacity: 1; transform: scale(1.1); }
+  [data-theme="high"] .moon-icon { opacity: 0.25; }
+
+  .toggle-switch {
+    position: relative; width: 44px; height: 24px; background: var(--toggle-track);
+    border-radius: 12px; border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.25), inset 0 -1px 1px rgba(255,255,255,0.1), 0 1px 2px rgba(0,0,0,0.1);
+    transition: all 0.35s var(--ease-out-expo); flex-shrink: 0;
+  }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+    background: linear-gradient(180deg, var(--toggle-thumb), rgba(0,0,0,0.15));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: all 0.35s var(--ease-out-expo);
+  }
+  [data-theme="high"] .toggle-thumb {
+    left: 22px; background: linear-gradient(180deg, #fff, #e8e4de);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  [data-theme="high"] .toggle-switch { background: var(--accent); box-shadow: inset 0 2px 4px rgba(0,0,0,0.12), 0 0 6px var(--accent-glow); }
+
+  /* ═══════════════════════════════════════════?     BOTTOM DOCK NAVIGATION ═?fixed, no scroll
+     ══════════════════════════════════════════*/
+  .bottom-dock {
+    display: flex; flex-shrink: 0; background: var(--display-bg); border-radius: 24px; padding: 4px;
+    margin-top: 10px; position: relative; z-index: 20;
+    box-shadow: var(--shadow-inner); border: 1px solid var(--display-border);
+    transition: all 0.5s var(--ease-out-expo);
+  }
+  .dock-option {
+    flex: 1; text-align: center; padding: 10px 0;
+    font-size: 0.7500rem; font-weight: 600; letter-spacing: 0.1em;
+    color: var(--text-dim); cursor: pointer; border-radius: 20px;
+    transition: all 0.35s var(--ease-out-expo); position: relative; z-index: 1; user-select: none;
+  }
+  .dock-option.active {
+    color: var(--text-primary);
+    background: linear-gradient(180deg, rgba(128,128,128,0.15), rgba(128,128,128,0.08));
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  [data-theme="high"] .dock-option.active { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+  /* ═══════════════════════════════════════════?     VIEW CONTAINERS ═?fixed height
+     ══════════════════════════════════════════*/
+  .views-area { flex: 1; position: relative; z-index: 5; min-height: 0; display: flex; flex-direction: column; }
+  .timer-view, .plan-view, .stats-view {
+    flex: 1; display: flex; flex-direction: column; min-height: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .timer-view.hidden, .plan-view:not(.active), .stats-view:not(.active) { display: none; }
+
+  /* ═══════════════════════════════════════════?     CIRCULAR TIMER DIAL
+     ══════════════════════════════════════════*/
+  .timer-section {
+    display: flex; flex-direction: column; align-items: center; gap: 14px; flex-shrink: 0;
+    padding-top: 16px; /* prevent bezel clipping, clear daily-bar */
+  }
+  .dial-container { position: relative; width: 232px; height: 232px; flex-shrink: 0; margin:0 auto; }
+
+  .dial-bezel {
+    position: absolute; inset: -6px; border-radius: 50%;
+    background: linear-gradient(145deg,
+      var(--bezel-outer1) 0%, var(--bezel-outer2) 25%,
+      var(--bezel-outer3) 50%, var(--bezel-outer2) 75%, var(--bezel-outer1) 100%);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 1px 2px rgba(255,255,255,0.05), inset 0 -2px 4px rgba(0,0,0,0.15);
+    z-index: 0;
+  }
+  .dial-bezel::after {
+    content: ''; position: absolute; inset: 3px; border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.2);
+    border-top-color: rgba(255,255,255,0.04); border-left-color: rgba(255,255,255,0.03);
+    pointer-events: none;
+  }
+  .dial-bezel::before {
+    content: ''; position: absolute; inset: 5px; border-radius: 50%;
+    background: repeating-conic-gradient(rgba(0,0,0,0.08) 0deg 1deg, transparent 1deg 3deg);
+    -webkit-mask: radial-gradient(circle, transparent 82%, #000 83%, #000 90%, transparent 91%);
+    mask: radial-gradient(circle, transparent 82%, #000 83%, #000 90%, transparent 91%);
+    pointer-events: none;
+  }
+
+  .dial-svg { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; overflow: visible; }
+  .ring-bg { fill: none; stroke: var(--bezel-inner1); stroke-width: 10; transition: stroke 0.5s; }
+
+  /* Red progress ring: <path> drawn CW from 12°to start angle.
+     Dash starts at 12° as dash shrinks, end retreats CW = visually CCW.
+     pathLength varies by arc length. */
+  .ring-progress {
+    fill: none;
+    stroke: #e84030;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.55s var(--ease-out-expo);
+    filter: drop-shadow(0 0 10px rgba(232,64,48,0.6));
+  }
+  .ring-progress.rest {
+    stroke: var(--rest);
+    filter: drop-shadow(0 0 10px rgba(58,143,232,0.5));
+  }
+  .ring-progress.warning-phase {
+    animation: ring-pulse 0.6s ease-in-out infinite;
+  }
+  @keyframes ring-pulse {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(232,64,48,0.8)); }
+    50% { filter: drop-shadow(0 0 24px rgba(232,64,48,1)); }
+  }
+
+  .tick-marks-layer {
+    position: absolute; inset: 10px; z-index: 3; pointer-events: none;
+  }
+  .tick {
+    position: absolute; top: 0; left: 50%; width: 1.5px; height: 4px;
+    background: var(--tick-color); border-radius: 1px;
+    transform-origin: 50% calc((var(--dial-size) - 20px) / 2);
+    opacity: 0.45; transition: background 0.5s, opacity 0.5s;
+  }
+  .tick.major { width: 2px; height: 8px; background: var(--tick-major); opacity: 0.75; }
+
+  .dial-glass {
+    position: absolute; inset: 10px; border-radius: 50%; z-index: 10; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 50% 35%, var(--glass-grad1) 0%, var(--glass-grad2) 45%, transparent 50%),
+      radial-gradient(ellipse at 35% 65%, var(--glass-grad3) 0%, transparent 30%);
+    box-shadow: inset 0 2px 6px rgba(255,255,255,0.04), 0 0 0 1.5px var(--dial-border);
+    transition: all 0.5s;
+  }
+  .glass-highlight {
+    position: absolute; top: 16px; left: 28px; width: 60px; height: 30px;
+    background: rgba(255,255,255,0.06); border-radius: 50%;
+    filter: blur(6px); z-index: 11; pointer-events: none; transition: background 0.5s;
+  }
+  [data-theme="high"] .glass-highlight { background: rgba(255,255,255,0.5); filter: blur(8px); }
+
+  .dial-display {
+    position: absolute; inset: 20px; border-radius: 50%;
+    background: var(--dial-face); z-index: 4;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: inset 0 5px 15px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.03);
+    transition: background 0.5s, box-shadow 0.5s;
+  }
+  [data-theme="high"] .dial-display { box-shadow: inset 0 3px 10px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.2); }
+  .dial-time {
+    font-family: var(--font-hei); font-size: 3.1250rem; font-weight: 300; letter-spacing: 0.03em;
+    color: var(--text-primary); line-height: 1; transition: color 0.5s; font-variant-numeric: tabular-nums;
+  }
+  .dial-label {
+    font-family: var(--font-hei); font-size: 0.6250rem; font-weight: 500; letter-spacing: 0.25em;
+    color: var(--text-dim); margin-top: 6px; transition: color 0.5s;
+  }
+  .dial-label.warning { color: var(--accent); animation: label-pulse 0.8s ease-in-out infinite; }
+  @keyframes label-pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+  /* ═══════════════════════════════════════════?     EXERCISE INFO PANEL ═?2×2 editable grid
+     ══════════════════════════════════════════*/
+  .info-panel {
+    width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px;
+    padding: 12px 18px; flex-shrink: 0;
+    background: var(--display-bg); border-radius: 16px;
+    box-shadow: var(--shadow-inner); border: 1px solid var(--display-border);
+    position: relative; z-index: 5; transition: all 0.5s var(--ease-out-expo);
+  }
+  .info-cell { display: flex; align-items: center; gap: 8px; }
+  .info-cell-lbl { font-size: 0.5625rem; font-weight: 500; letter-spacing: 0.14em; color: var(--text-dim); white-space: nowrap; transition: color 0.5s; }
+  .info-cell-val {
+    font-family: var(--font-hei); font-size: 1.0000rem; font-weight: 600; color: var(--text-primary);
+    letter-spacing: 0.03em; cursor: pointer; transition: all 0.15s ease, color 0.5s;
+    padding: 3px 8px; border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(128,128,128,0.06) 100%);
+    border: 1.5px solid rgba(128,128,128,0.12);
+    min-width: 40px; text-align: center;
+    position: relative; user-select: none;
+    box-shadow:
+      0 2px 0 rgba(0,0,0,0.08),
+      0 3px 6px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    transform: translateY(0);
+  }
+  [data-theme="high"] .info-cell-val {
+    background: linear-gradient(180deg, #fff 0%, #f2efe8 100%);
+    border-color: #c8c4ba;
+    box-shadow:
+      0 2px 0 #c0bcb2,
+      0 3px 6px rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .info-cell-val:hover {
+    border-color: var(--accent);
+    box-shadow:
+      0 2px 0 rgba(0,0,0,0.08),
+      0 3px 6px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 0 0 2px var(--accent-glow);
+  }
+  .info-cell-val:active, .info-cell-val.editing {
+    transform: translateY(1px);
+    background: rgba(128,128,128,0.12);
+    border-color: var(--accent);
+    box-shadow:
+      inset 0 3px 6px rgba(0,0,0,0.25),
+      inset 0 -1px 0 rgba(255,255,255,0.04),
+      0 0 0 2px var(--accent-glow);
+  }
+  [data-theme="high"] .info-cell-val:active,
+  [data-theme="high"] .info-cell-val.editing {
+    background: #e0dcd4;
+    box-shadow:
+      inset 0 3px 6px rgba(0,0,0,0.12),
+      inset 0 -1px 0 rgba(255,255,255,0.1),
+      0 0 0 2px var(--accent-glow);
+  }
+  .info-cell-input {
+    font-family: var(--font-hei); font-size: 1.0000rem; font-weight: 600; color: var(--text-primary);
+    background: transparent; border: none; border-radius: 8px;
+    padding: 3px 6px; width: 100%; text-align: center; outline: none;
+  }
+  .info-cell-input.narrow { max-width: 52px; }
+  .set-cur { font-size: 0.6875rem; color: var(--text-dim); font-weight: 400; }
+  .set-sep { color: var(--text-dim); margin: 0 1px; }
+
+  /* Action buttons row */
+  .ex-actions {
+    display: flex; gap: 8px; width: 100%; flex-shrink: 0;
+  }
+  .ex-actions .btn-sm { flex: 1; text-align: center; }
+  .btn-sm.ghost {
+    background: transparent; border: 1.5px dashed var(--text-dim); color: var(--text-secondary);
+    box-shadow: none; opacity: 0.7;
+  }
+  .btn-sm.ghost:active { opacity: 1; background: rgba(128,128,128,0.06); transform: none; }
+  .btn-sm.ghost:hover { opacity: 0.9; border-color: var(--accent); color: var(--accent); }
+
+  /* Template selector dropdown */
+  .template-area {
+    display: flex; gap: 6px; align-items: center; width: 100%; flex-shrink: 0;
+  }
+  .template-select {
+    flex: 1; font-family: var(--font-hei); font-size: 0.6875rem; font-weight: 500;
+    background: var(--display-bg); color: var(--text-secondary);
+    border: 1px solid var(--display-border); border-radius: 10px;
+    padding: 8px 12px; outline: none; cursor: pointer;
+    box-shadow: var(--shadow-inner); transition: all 0.25s;
+  }
+  .template-select:hover { border-color: var(--accent); color: var(--text-primary); }
+  .template-select:active { transform: scale(0.98); }
+
+  .plan-ex-list { display: none; flex-direction: column; gap: 5px; flex-shrink: 0; width: 100%; }
+  .plan-ex-list.visible { display: flex; }
+  .plan-ex-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px; background: var(--display-bg); border-radius: 12px;
+    border: 1px solid var(--display-border); transition: all 0.35s var(--ease-out-expo);
+  }
+  .plan-ex-row.current { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+  .plan-ex-row.done { opacity: 0.45; }
+  .plan-ex-row .pe-name { font-size: 0.8125rem; font-weight: 500; color: var(--text-primary); transition: color 0.5s; }
+  .plan-ex-row .pe-info { font-size: 0.6250rem; color: var(--text-secondary); transition: color 0.5s; }
+  .pe-check { width: 20px; height: 20px; border-radius: 50%; background: var(--green);
+    display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; color: #fff; flex-shrink: 0; }
+
+  /* ═══════════════════════════════════════════?     CONTROLS ═?[reset] [  START  ] [next]
+     ══════════════════════════════════════════*/
+  .controls {
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    gap: 8px; flex-shrink: 0; position: relative; z-index: 5;
+    align-items: stretch; min-height: 68px; margin-bottom: 18px;
+  }
+
+  /* ── START button (center, dominant) ── */
+  .btn-start-wrap { grid-column: 2; position: relative; }
+  .btn-start {
+    width: 100%; height: 100%; padding: 0 14px; border: none; border-radius: 22px;
+    font-family: var(--font-hei); font-size: 1.3750rem; font-weight: 800;
+    letter-spacing: 0.22em; cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.4s;
+    position: relative; user-select: none;
+    background: linear-gradient(160deg, var(--btn-start-top) 0%, var(--btn-start-mid) 45%, var(--btn-start-bot) 100%);
+    color: var(--btn-start-text);
+    /* 钢板上凹刻文字 — 上部暗影(槽深) + 下部微光(槽底反光) */
+    text-shadow:
+      0 -1px 1px rgba(0,0,0,0.50),
+      0 1px 0 rgba(255,255,255,0.14);
+    /* Refined 3D — restrained depth */
+    box-shadow:
+      0 4px 0 var(--btn-start-shadow),
+      0 6px 16px rgba(0,0,0,0.24),
+      inset 0 1.5px 0 rgba(255,255,255,0.22),
+      inset 0 -1px 0 rgba(0,0,0,0.1);
+    text-shadow: 0 -1px 3px rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+    /* Embossed side rim */
+    outline: none;
+  }
+  /* Rim highlight on the face */
+  .btn-start::before {
+    content: ''; position: absolute; inset: 3px; border-radius: 19px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .btn-start:active {
+    transform: translateY(4px);
+    box-shadow:
+      0 1px 0 var(--btn-start-shadow),
+      0 1px 4px rgba(0,0,0,0.15);
+  }
+  .btn-start.running {
+    /* 运行时保持默认灰色，不变成深灰/夜间色；仅点亮LED */
+    background: linear-gradient(160deg, var(--btn-start-top) 0%, var(--btn-start-mid) 45%, var(--btn-start-bot) 100%);
+    box-shadow:
+      0 4px 0 var(--btn-start-shadow),
+      0 6px 16px rgba(0,0,0,0.24),
+      inset 0 1.5px 0 rgba(255,255,255,0.22),
+      inset 0 -1px 0 rgba(0,0,0,0.1);
+    color: var(--btn-start-text);
+    text-shadow:
+      0 -1px 1px rgba(0,0,0,0.50),
+      0 1px 0 rgba(255,255,255,0.14);
+  }
+  .btn-start::after {
+    content: ''; position: absolute; top: 8px; right: 14px; width: 8px; height: 8px;
+    border-radius: 50%; background: #4eff4e;
+    box-shadow: 0 0 8px #4eff4e, 0 0 16px rgba(78,255,78,0.5);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .btn-start.running::after { opacity: 1; }
+
+  /* ── Side buttons (flanks, engraved thin-line style) ── */
+  .btn-next, .btn-reset {
+    /* 透明背景，细线刻出感 */
+    background: transparent;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.10s ease, opacity 0.2s, border-color 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    user-select: none; -webkit-tap-highlight-color: transparent;
+    /* 刻线 = 单层细描边，无填充，无立体投*/
+    border: 1.5px solid rgba(120,120,128,0.38);
+    box-shadow: none;
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+  /* LOW-KEY: 深色模式略亮的刻*/
+  [data-theme="low"] .btn-next,
+  [data-theme="low"] .btn-reset {
+    border-color: rgba(160,160,168,0.30);
+    color: var(--text-dim);
+  }
+  /* HIGH-KEY: 浅色模式深一点的刻线 */
+  [data-theme="high"] .btn-next,
+  [data-theme="high"] .btn-reset {
+    border-color: rgba(80,76,70,0.28);
+    color: var(--text-secondary);
+    background: transparent;
+    box-shadow: none;
+  }
+  .btn-next:active, .btn-reset:active {
+    transform: scale(0.92);
+    opacity: 1;
+    border-color: rgba(120,120,128,0.55);
+  }
+
+  .btn-next { grid-column: 3; }
+  .btn-next-arrow {
+    display: block; width: 18px; height: 18px;
+    transition: transform 0.2s var(--ease-out-expo);
+    opacity: 0.75;
+  }
+  .btn-next:active .btn-next-arrow { transform: translateX(2px); opacity: 1; }
+
+  .btn-reset { grid-column: 1; }
+  .btn-reset-icon { display: block; width: 16px; height: 16px; opacity: 0.75; }
+
+  /* ═══════════════════════════════════════════?     DAILY BAR
+     ══════════════════════════════════════════*/
+  .daily-bar {
+    display: flex; justify-content: space-around; padding: 14px 12px; flex-shrink: 0;
+    background: var(--display-bg); border-radius: 16px;
+    box-shadow: var(--shadow-inner); border: 1px solid var(--display-border);
+    position: relative; z-index: 5; transition: all 0.5s var(--ease-out-expo);
+    margin-bottom: 28px;
+  }
+  .daily-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .daily-val { font-size: 1.2500rem; font-weight: 400; color: var(--text-primary); transition: color 0.5s; font-variant-numeric: tabular-nums; }
+  .daily-lbl { font-size: 0.5625rem; letter-spacing: 0.14em; color: var(--text-dim); transition: color 0.5s; }
+  .daily-sep { width: 1px; background: linear-gradient(180deg, transparent, var(--text-dim), transparent); opacity: 0.3; }
+
+  /* ═══════════════════════════════════════════?     CALENDAR PLAN VIEW ═?compact, one-screen month
+     ══════════════════════════════════════════*/
+  .cal-container { display: flex; flex-direction: column; flex-shrink: 0; }
+
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px; flex-shrink: 0;
+  }
+  .cal-month-title { font-size: 1.0000rem; font-weight: 600; color: var(--text-primary); letter-spacing: 0.06em; transition: color 0.5s; }
+  .cal-nav {
+    width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--display-border);
+    background: var(--display-bg); color: var(--text-secondary);
+    font-family: var(--font-hei); font-size: 0.8750rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-inner); transition: all 0.2s;
+  }
+  .cal-nav:active { transform: scale(0.92); background: var(--card-hover); }
+
+  .cal-weekdays {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    text-align: center; margin-bottom: 4px; flex-shrink: 0;
+  }
+  .cal-weekday {
+    font-size: 0.5625rem; font-weight: 500; color: var(--text-dim);
+    letter-spacing: 0.08em; padding: 3px 0; transition: color 0.5s;
+  }
+
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 3px; flex: 1; align-content: start;
+  }
+  .cal-day {
+    min-height: 40px;
+    background: var(--cal-day-bg); border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 5px 2px;
+    font-family: var(--font-hei); cursor: pointer; position: relative;
+    border: 1.5px solid transparent;
+    box-shadow: var(--shadow-inner);
+    transition: all 0.2s var(--ease-out-expo);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .cal-day:hover { background: var(--cal-day-hover); }
+  .cal-day:active { transform: scale(0.94); }
+  .cal-day.empty { background: transparent; box-shadow: none; border: none; cursor: default; pointer-events: none; }
+  .cal-day.today {
+    border-color: var(--cal-today-ring);
+    box-shadow: var(--shadow-inner), 0 0 0 2px var(--accent-glow);
+  }
+  .cal-day-num {
+    font-size: 0.8125rem; font-weight: 600; color: var(--text-primary);
+    line-height: 1; transition: color 0.5s;
+  }
+  .cal-day.today .cal-day-num { color: var(--accent); }
+
+  .cal-day-dots {
+    display: flex; gap: 2px; margin-top: 2px; flex-wrap: wrap; justify-content: center;
+  }
+  .cal-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cal-dot.done { background: var(--cal-done-dot); box-shadow: 0 0 2px var(--cal-done-dot); }
+  .cal-dot.plan { background: var(--cal-plan-dot); box-shadow: 0 0 2px var(--cal-plan-dot); }
+  .cal-day.selected {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-inner), 0 0 0 2px var(--accent-glow);
+  }
+
+  .day-detail {
+    flex-shrink: 0; margin-top: 6px;
+    padding: 4px 0;
+    transition: all 0.35s var(--ease-out-expo);
+  }
+  .day-detail.hidden { display: none; }
+  .day-detail-title {
+    font-size: 0.7500rem; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 8px; letter-spacing: 0.06em; transition: color 0.5s;
+  }
+  .day-detail-empty {
+    font-size: 0.6875rem; color: var(--text-dim); text-align: center; padding: 6px 0;
+  }
+  .day-ex-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 0;
+    border-bottom: 1px solid var(--display-border);
+    font-size: 0.6875rem; color: var(--text-primary); transition: all 0.5s;
+  }
+  .day-ex-row:last-child { border-bottom: none; }
+  .day-ex-name { flex: 1; font-weight: 500; }
+  .day-ex-info { color: var(--text-secondary); font-size: 0.6250rem; }
+  .day-ex-check {
+    width: 18px; height: 18px; border-radius: 50%; cursor: pointer; flex-shrink: 0;
+    background: var(--display-bg); border: 1.5px solid var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .day-ex-check.done {
+    background: var(--green); border-color: var(--green); color: #fff; font-size: 0.5625rem;
+  }
+
+  .day-detail-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+  .day-add-area {
+    display: flex; gap: 6px; align-items: flex-end; flex-wrap: wrap; margin-top: 6px;
+  }
+  .day-field { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 60px; }
+  .day-field-lbl { font-size: 0.5000rem; letter-spacing: 0.1em; color: var(--text-dim); }
+  .day-input {
+    font-family: var(--font-hei); background: var(--display-bg);
+    border: 1px solid var(--display-border); border-radius: 8px;
+    padding: 6px 8px; color: var(--text-primary); font-size: 0.6875rem;
+    outline: none; transition: all 0.25s; box-shadow: var(--shadow-inner);
+  }
+  .day-input:focus { border-color: var(--accent); box-shadow: var(--shadow-inner), 0 0 0 2px var(--accent-glow); }
+  .day-input-sm { width: 44px; text-align: center; padding: 6px 4px; }
+
+  .btn-sm {
+    font-family: var(--font-hei); font-size: 0.6250rem; font-weight: 600;
+    padding: 6px 14px; border: none; border-radius: 8px; cursor: pointer;
+    background: linear-gradient(180deg, var(--btn-gradient1), var(--btn-gradient2));
+    color: var(--btn-text); box-shadow: 0 2px 0 var(--btn-shadow-base);
+    transition: all 0.1s ease; letter-spacing: 0.06em;
+  }
+  .btn-sm:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-shadow-base); }
+  .btn-sm.accent { background: linear-gradient(180deg, var(--btn-start-top), var(--btn-start-mid) 50%, var(--btn-start-bot)); color: #fff; box-shadow: 0 3px 0 var(--btn-start-shadow); }
+  .btn-sm.danger { background: linear-gradient(180deg, #6e4a4a, #503838); color: #e8c0c0; }
+
+  /* ═══════════════════════════════════════════?     STATS
+     ══════════════════════════════════════════*/
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; align-content: start; }
+  .stat-card {
+    background: var(--display-bg); border-radius: 14px; padding: 18px;
+    box-shadow: var(--shadow-inner); border: 1px solid var(--display-border);
+    display: flex; flex-direction: column; gap: 4px; transition: all 0.5s var(--ease-out-expo);
+  }
+  .stat-card.full { grid-column: 1 / -1; }
+  .stat-card-val { font-size: 1.7500rem; font-weight: 300; color: var(--text-primary); transition: color 0.5s; }
+  .stat-card-lbl { font-size: 0.6250rem; letter-spacing: 0.12em; color: var(--text-dim); transition: color 0.5s; }
+  .week-bar-container { margin-top: 6px; display: flex; justify-content: space-between; align-items: flex-end; gap: 4px; height: 70px; }
+  .week-day-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px; }
+  .wd-label { font-size: 0.6250rem; color: var(--text-secondary); transition: color 0.5s; }
+  .wd-track { width: 100%; height: 50px; background: var(--tag-bg); border-radius: 4px; overflow: hidden; position: relative; display: flex; align-items: flex-end; }
+  .wd-fill { width: 100%; background: linear-gradient(to top, var(--accent), #ff8a5c); border-radius: 0 0 4px 4px; transition: height 0.6s var(--ease-out-expo); min-height: 2px; }
+
+  /* ═══════════════════════════════════════════?     INLINE DIALOG (replaces prompt)
+     ══════════════════════════════════════════*/
+  .inline-dialog-overlay {
+    position: absolute; inset: 0; border-radius: 32px;
+    background: rgba(0,0,0,0.5); z-index: 50;
+    display: none; align-items: center; justify-content: center;
+  }
+  [data-theme="high"] .inline-dialog-overlay { background: rgba(0,0,0,0.15); }
+  .inline-dialog-overlay.active { display: flex; }
+  .inline-dialog-card {
+    background: var(--display-bg);
+    border-radius: 18px; padding: 24px 22px 18px;
+    box-shadow: var(--shadow-outer), 0 0 0 1px var(--display-border);
+    min-width: 240px; max-width: 280px;
+    transition: background 0.5s;
+  }
+  .inline-dialog-title {
+    font-size: 0.8750rem; font-weight: 600; color: var(--text-primary);
+    letter-spacing: 0.06em; margin-bottom: 14px; text-align: center;
+    transition: color 0.5s;
+  }
+  .inline-dialog-input {
+    width: 100%; font-family: var(--font-hei); font-size: 0.9375rem;
+    background: var(--day-detail-bg); color: var(--text-primary);
+    border: 1px solid var(--display-border); border-radius: 10px;
+    padding: 10px 12px; outline: none; transition: all 0.25s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .inline-dialog-input:focus { border-color: var(--accent); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 0 2px var(--accent-glow); }
+  .inline-dialog-actions {
+    display: flex; gap: 8px; margin-top: 16px;
+  }
+  .inline-dialog-actions .btn-sm { flex: 1; text-align: center; padding: 10px 0; font-size: 0.7500rem; }
+
+  /* ═══════════════════════════════════════════?     SCROLL WHEEL (number picker)
+     ══════════════════════════════════════════*/
+  .scroll-wheel-overlay {
+    position: absolute; inset: 0; border-radius: 32px;
+    background: rgba(0,0,0,0.55); z-index: 55;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; transition: background 0.3s;
+  }
+  .scroll-wheel-overlay.active { display: flex; }
+  .scroll-wheel-card {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--display-bg); border-radius: 20px; padding: 20px 28px 18px;
+    box-shadow: var(--shadow-outer), 0 0 0 1px var(--display-border);
+    transition: background 0.5s;
+  }
+  .scroll-wheel-label {
+    font-family: var(--font-hei); font-size: 0.7500rem; font-weight: 600;
+    color: var(--text-secondary); letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .scroll-wheel-unit {
+    font-family: var(--font-hei); font-size: 0.6250rem; color: var(--text-dim);
+    margin-top: 4px; letter-spacing: 0.08em;
+  }
+  .scroll-wheel-container {
+    position: relative; width: 110px; height: 170px;
+    overflow: hidden; border-radius: 12px;
+    background: var(--day-detail-bg);
+    box-shadow: var(--shadow-inner);
+    border: 1px solid var(--display-border);
+    cursor: grab; user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+  .scroll-wheel-container:active { cursor: grabbing; }
+  .scroll-wheel-track {
+    position: absolute; left: 0; right: 0;
+    will-change: transform;
+  }
+  .scroll-wheel-item {
+    height: 44px; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-hei); font-size: 1.0625rem; font-weight: 500;
+    color: var(--text-dim); transition: color 0.08s, font-size 0.08s;
+    opacity: 0.35;
+  }
+  .scroll-wheel-item.selected {
+    opacity: 1; font-size: 1.6250rem; font-weight: 700; color: var(--accent);
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+  /* 3D fade masks */
+  .scroll-wheel-container::before,
+  .scroll-wheel-container::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 55px;
+    z-index: 3; pointer-events: none;
+  }
+  .scroll-wheel-container::before {
+    top: 0; background: linear-gradient(180deg, var(--day-detail-bg) 0%, transparent 100%);
+  }
+  .scroll-wheel-container::after {
+    bottom: 0; background: linear-gradient(0deg, var(--day-detail-bg) 0%, transparent 100%);
+  }
+  .scroll-wheel-indicator {
+    position: absolute; left: 8px; right: 8px; top: 50%;
+    height: 44px; transform: translateY(-50%);
+    border-top: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    pointer-events: none; z-index: 2;
+    opacity: 0.7; border-radius: 4px;
+  }
+  .scroll-wheel-actions {
+    display: flex; gap: 12px; margin-top: 4px;
+  }
+  .scroll-wheel-actions .btn-sm { min-width: 70px; padding: 10px 0; text-align: center; font-size: 0.7500rem; }
+
+  /* ═══════════════════════════════════════════?     REST OVERLAY
+     ══════════════════════════════════════════*/
+  .rest-overlay {
+    position: absolute; inset: 0; background: var(--overlay-bg); border-radius: 32px;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 30; gap: 18px; transition: background 0.5s;
+  }
+  .rest-overlay.active { display: flex; }
+  .rest-time { font-family: var(--font-hei); font-size: 4.0000rem; font-weight: 200; color: var(--rest); transition: color 0.5s; text-shadow: 0 0 40px rgba(58,143,232,0.3); font-variant-numeric: tabular-nums; }
+  .rest-label { font-family: var(--font-hei); font-size: 0.8125rem; letter-spacing: 0.3em; color: var(--text-secondary); transition: color 0.5s; }
+  .btn-skip { font-family: var(--font-hei); padding: 10px 36px; background: transparent; border: 1.5px solid var(--rest); border-radius: 24px; color: var(--rest); font-size: 0.7500rem; letter-spacing: 0.12em; cursor: pointer; transition: all 0.25s; }
+  .btn-skip:hover { background: rgba(58,143,232,0.08); }
+
+  /* ═══════════════════════════════════════════?     RESPONSIVE
+     ══════════════════════════════════════════*/
+  @media (max-width: 500px) {
+    :root { --dial-size: 180px; }
+    .device { border-radius: 24px; padding: env(safe-area-inset-top, 16px) 14px env(safe-area-inset-bottom, 20px); max-height: 100dvh; }
+    .device::after, .rest-overlay { border-radius: 24px; }
+    .dial-container { width: 180px; height: 180px; }
+    .dial-time { font-size: 2.3750rem; }
+    .controls { gap: 5px; grid-template-columns: 34px 1fr 34px; min-height: 58px; }
+    .btn-start { font-size: 1.1250rem; border-radius: 16px; }
+    .btn-next, .btn-reset { border-radius: 11px; }
+    .btn-next-arrow { width: 20px; height: 20px; }
+    .btn-reset-icon { width: 18px; height: 18px; }
+    .cal-grid { gap: 2px; }
+    .cal-day-num { font-size: 0.7500rem; }
+    .cal-day { border-radius: 6px; min-height: 34px; padding: 4px 2px; }
+    .day-detail { padding: 2px 0; }
+  }
+  @media (max-width: 380px) {
+    :root { --dial-size: 150px; }
+    .device { padding: env(safe-area-inset-top, 12px) 10px env(safe-area-inset-bottom, 16px); }
+    .dial-container { width: 150px; height: 150px; }
+    .dial-time { font-size: 2.0000rem; }
+    .info-panel { gap: 6px 10px; padding: 10px 14px; }
+    .info-cell-val { font-size: 0.8750rem; padding: 2px 6px; }
+    .cal-day-num { font-size: 0.6875rem; }
+    .cal-grid { gap: 2px; }
+    .controls { gap: 4px; grid-template-columns: 30px 1fr 30px; min-height: 52px; }
+    .btn-start { font-size: 1.0000rem; border-radius: 14px; }
+    .btn-next, .btn-reset { border-radius: 9px; }
+    .btn-next-arrow { width: 18px; height: 18px; }
+    .btn-reset-icon { width: 16px; height: 16px; }
+    .scroll-wheel-card { padding: 14px 18px 12px; }
+    .scroll-wheel-container { width: 90px; height: 140px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ring-progress { transition: none; }
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ═══════════════════════════════════════════?     PRESET PICKER
+     ══════════════════════════════════════════*/
+  .preset-overlay {
+    position: absolute; inset: 0; border-radius: 32px;
+    background: rgba(0,0,0,0.65); z-index: 50;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  [data-theme="high"] .preset-overlay { background: rgba(0,0,0,0.2); }
+  .preset-overlay.active { display: flex; }
+  .preset-card {
+    background: var(--display-bg);
+    border-radius: 20px; padding: 20px 18px 16px;
+    border: 1px solid var(--display-border);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5), var(--shadow-inner);
+    width: 330px; max-width: 92%;
+    max-height: 78%; display: flex; flex-direction: column;
+    transition: background 0.5s, box-shadow 0.5s;
+    position: relative; isolation: isolate;
+  }
+  .preset-card::before {
+    content: ''; position: absolute; inset: 0; border-radius: 20px; z-index: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.015) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.01) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .preset-card::after {
+    content: ''; position: absolute; inset: 0; border-radius: 20px; z-index: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(128,128,128,0.015) 2px, rgba(128,128,128,0.015) 4px);
+    pointer-events: none;
+  }
+  [data-theme="high"] .preset-card {
+    border-color: rgba(0,0,0,0.08);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.15), var(--shadow-inner);
+  }
+  [data-theme="high"] .preset-card::before {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 50%);
+  }
+  [data-theme="high"] .preset-card::after {
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px),
+      linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 40%);
+  }
+  .preset-title {
+    font-size: 0.8750rem; font-weight: 700; color: var(--text-primary);
+    letter-spacing: 0.08em; margin-bottom: 14px; text-align: center;
+    transition: color 0.5s; flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .preset-list {
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    flex: 1; min-height: 0; position: relative; z-index: 1;
+  }
+  .preset-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    cursor: pointer; transition: all 0.12s ease;
+    margin-bottom: 4px;
+    background: var(--card-hover);
+    border: 1px solid transparent;
+    position: relative;
+  }
+  .preset-item:hover { background: rgba(128,128,128,0.15); border-color: var(--display-border); }
+  .preset-item:active { transform: scale(0.98); background: rgba(232,74,42,0.08); border-color: var(--accent); }
+  .preset-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #ff6b44);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.0000rem; color: #fff; flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(232,74,42,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .preset-info { flex: 1; min-width: 0; }
+  .preset-name {
+    font-size: 0.8125rem; font-weight: 600; color: var(--text-primary);
+    letter-spacing: 0.04em; line-height: 1.3; transition: color 0.5s;
+  }
+  .preset-meta {
+    font-size: 0.6875rem; color: var(--text-dim); margin-top: 2px;
+  }
+  .preset-tag {
+    font-size: 0.5625rem; font-weight: 600; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 6px;
+    background: rgba(128,128,128,0.12); color: var(--text-dim);
+    text-transform: uppercase; flex-shrink: 0;
+  }
+  .preset-actions {
+    display: flex; gap: 8px; margin-top: 14px; flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .preset-actions .btn-sm { flex: 1; text-align: center; padding: 10px 0; font-size: 0.7500rem; }
+  .preset-divider {
+    font-size: 0.6250rem; color: var(--text-dim); text-align: center;
+    margin: 8px 0; letter-spacing: 0.1em; opacity: 0.5;
+  }
+
+  /* Two-level preset picker */
+  .preset-level1 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 8px;
+    flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .preset-cat-btn {
+    font-size: 0.7500rem; font-weight: 600; letter-spacing: 0.05em;
+    padding: 14px 8px; border-radius: 10px;
+    background: linear-gradient(180deg, var(--btn-start-top), var(--btn-start-mid) 50%, var(--btn-start-bot));
+    color: #fff; border: none; cursor: pointer; transition: all 0.1s ease;
+    font-family: var(--font-hei); text-align: center;
+    box-shadow: 0 4px 0 var(--btn-start-shadow);
+    position: relative;
+  }
+  .preset-cat-btn::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
+    border-radius: 10px 10px 0 0; pointer-events: none;
+  }
+  .preset-cat-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--btn-start-shadow); }
+  .preset-back {
+    font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary);
+    cursor: pointer; margin-bottom: 8px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 4px; padding: 4px 0;
+    transition: color 0.2s; position: relative; z-index: 1;
+  }
+  .preset-back:hover { color: var(--accent); }
+  .preset-back::before {
+    content: '←'; font-size: 0.7500rem;
+  }
+
+  /* Template load dropdown in day detail */
+  .day-template-bar {
+    display: flex; gap: 6px; margin-bottom: 8px;
+  }
+  .day-template-select {
+    flex: 1; padding: 7px 14px; border-radius: 8px; text-align: left;
+    background: var(--display-bg); color: var(--text-secondary);
+    border: 1px solid var(--display-border); font-family: var(--font-hei);
+    font-size: 0.6875rem; font-weight: 500; cursor: pointer;
+    box-shadow: var(--shadow-inner);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .day-template-select:hover { border-color: var(--accent); color: var(--text-primary); }
+  .day-template-select:active { transform: scale(0.98); }
+  .day-add-preset-btn {
+    font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.06em;
+    padding: 7px 12px; border-radius: 8px;
+    background: linear-gradient(180deg, var(--btn-gradient1), var(--btn-gradient2));
+    color: var(--btn-text); border: none; cursor: pointer;
+    font-family: var(--font-hei); white-space: nowrap;
+    box-shadow: 0 2px 0 var(--btn-shadow-base);
+    transition: all 0.1s ease;
+  }
+  .day-add-preset-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-shadow-base); }
+
+  /* Exercise edit buttons — flat, consistent with app surfaces */
+  .exedit-btn-list {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 14px; position: relative; z-index: 1;
+  }
+  .exedit-btn {
+    font-family: var(--font-hei); font-size: 0.8125rem; font-weight: 500;
+    letter-spacing: 0.04em; text-align: center;
+    padding: 11px 16px; border: 1px solid var(--display-border);
+    border-radius: 10px; cursor: pointer;
+    background: var(--card-hover);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-inner);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .exedit-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .exedit-btn:active { background: rgba(232,74,42,0.06); }
+  .exedit-btn.danger {
+    color: #d44;
+    border-color: transparent;
+  }
+  .exedit-btn.danger:hover { border-color: #d44; color: #e84030; }
+  .exedit-btn.danger:active { background: rgba(220,60,60,0.06); }
+
+  /* ═══════════════════════════════════════════?     MENU OVERLAY
+     ══════════════════════════════════════════*/
+  .menu-section { margin-bottom: 16px; position: relative; z-index: 1; }
+  .menu-section:last-child { margin-bottom: 0; }
+  .menu-label {
+    font-size: 0.6250rem; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase;
+  }
+  .menu-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--display-border);
+    transition: border-color 0.5s;
+  }
+  .menu-row:last-child { border-bottom: none; }
+  .menu-row-label { font-size: 0.8125rem; font-weight: 500; color: var(--text-primary); transition: color 0.5s; }
+  .menu-row-hint { font-size: 0.6250rem; color: var(--text-dim); margin-top: 2px; }
+  .menu-row-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .menu-select {
+    font-family: var(--font-hei); font-size: 0.7500rem; font-weight: 500;
+    padding: 5px 24px 5px 10px; border-radius: 6px;
+    background: var(--card-hover); color: var(--text-primary);
+    border: 1px solid var(--display-border);
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 8px center;
+  }
+  .menu-toggle {
+    position: relative; width: 40px; height: 22px; border-radius: 11px;
+    background: var(--toggle-track); border: 1px solid rgba(0,0,0,0.15);
+    cursor: pointer; transition: background 0.3s, border-color 0.3s;
+    flex-shrink: 0;
+  }
+  .menu-toggle.on { background: var(--accent); border-color: transparent; }
+  .menu-toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .menu-toggle.on::after { transform: translateX(18px); }
+  .menu-opt-btn {
+    font-family: var(--font-hei); font-size: 0.7500rem; font-weight: 600;
+    padding: 6px 22px 6px 12px; border-radius: 8px; text-align: center;
+    background: var(--card-hover); color: var(--text-primary);
+    border: 1px solid var(--display-border); cursor: pointer;
+    box-shadow: var(--shadow-inner); transition: border-color 0.2s;
+    position: relative; min-width: 56px;
+  }
+  .menu-opt-btn::after {
+    content: '▾'; position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: 0.5000rem; color: var(--text-dim);
+  }
+  .menu-opt-btn:hover { border-color: var(--accent); }
+  .menu-opt-btn:active { background: rgba(232,74,42,0.06); }
+  .menu-opt-list {
+    display: flex; flex-direction: column; gap: 3px;
+    margin: 0; padding: 0; position: relative; z-index: 1;
+  }
+  .menu-opt-item {
+    font-family: var(--font-hei); font-size: 0.8125rem; font-weight: 500;
+    text-align: center; padding: 10px 16px; border-radius: 8px;
+    background: var(--card-hover); color: var(--text-primary);
+    border: 1px solid transparent; cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .menu-opt-item:hover { border-color: var(--display-border); }
+  .menu-opt-item:active { background: rgba(232,74,42,0.08); border-color: var(--accent); }
+  .menu-opt-item.selected { color: var(--accent); font-weight: 700; }
+  .menu-about {
+    text-align: center; padding: 8px 0; position: relative; z-index: 1;
+  }
+  .menu-about-name { font-size: 1.2500rem; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; }
+  .menu-about-ver { font-size: 0.6875rem; color: var(--text-dim); margin: 4px 0 12px; }
+  .menu-about-line { font-size: 0.6875rem; color: var(--text-secondary); line-height: 1.8; }
+
+  /* ═══════════════════════════════════════════?     SETUP VIEW (2.0)
+     ══════════════════════════════════════════*/
+  .setup-view {
+    display: none; flex-direction: column;
+    flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 8px 4px 20px;
+  }
+  .setup-view.active { display: flex; }
+  .setup-title {
+    font-size: 1.3750rem; font-weight: 700; color: var(--text-primary);
+    letter-spacing: 0.06em; text-align: center; margin: 16px 0 20px;
+    transition: color 0.5s;
+  }
+  .setup-subtitle {
+    font-size: 0.7500rem; font-weight: 600; letter-spacing: 0.1em;
+    color: var(--text-dim); margin: 8px 0 6px; text-transform: uppercase;
+  }
+  .setup-template-select {
+    width: 100%; padding: 10px 14px; border-radius: 10px;
+    background: var(--display-bg); color: var(--text-primary);
+    border: 1px solid var(--display-border); font-family: var(--font-hei);
+    font-size: 0.8125rem; font-weight: 500; cursor: pointer;
+    margin-bottom: 12px; appearance: none; -webkit-appearance: none;
+    box-shadow: var(--shadow-inner-soft);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    padding-right: 32px;
+  }
+  .setup-template-select:focus { outline: none; border-color: var(--accent); }
+  .setup-template-select:hover { border-color: var(--accent); }
+  .setup-template-select:active { transform: scale(0.98); }
+  .setup-list { display: flex; flex-direction: column; gap: 5px; margin: 6px 0 12px; }
+  .setup-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; background: var(--display-bg); border-radius: 12px;
+    border: 1px solid var(--display-border); cursor: pointer; transition: all 0.2s;
+  }
+  .setup-row:hover { background: rgba(128,128,128,0.08); }
+  .setup-row .sr-name { font-size: 0.8125rem; font-weight: 500; color: var(--text-primary); }
+  .setup-row .sr-info { font-size: 0.6250rem; color: var(--text-secondary); }
+  .setup-row.dragging { display: none; }
+  .setup-row.drop-before { margin-top: 28px; transition: margin 0.1s ease; }
+  .setup-row.drop-after { margin-bottom: 28px; transition: margin 0.1s ease; }
+  .plan-ex-row.dragging { display: none; }
+  .plan-ex-row.drop-before { margin-top: 26px; transition: margin 0.1s ease; }
+  .plan-ex-row.drop-after { margin-bottom: 26px; transition: margin 0.1s ease; }
+  .drag-clone {
+    position: fixed; z-index: 999; pointer-events: none;
+    padding: 10px 14px; border-radius: 12px;
+    background: var(--display-bg); color: var(--text-primary);
+    border: 2px solid var(--accent);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 16px var(--accent-glow);
+    font-family: var(--font-hei); font-size: 0.8125rem; font-weight: 500;
+    transform: translate(-50%, -50%); opacity: 0.95;
+    display: flex; justify-content: space-between; align-items: center;
+    min-width: 200px; gap: 12px;
+  }
+  .drag-clone-name { flex: 1; }
+  .drag-clone-info { font-size: 0.6250rem; color: var(--text-secondary); }
+  .setup-list.drop-top { padding-top: 28px; transition: padding 0.1s ease; }
+  .plan-ex-list.drop-top { padding-top: 26px; transition: padding 0.1s ease; }
+  .setup-list.drop-bottom { padding-bottom: 28px; transition: padding 0.1s ease; }
+  .plan-ex-list.drop-bottom { padding-bottom: 26px; transition: padding 0.1s ease; }
+  .setup-empty {
+    text-align: center; color: var(--text-dim); font-size: 0.7500rem;
+    padding: 24px 0; letter-spacing: 0.06em;
+  }
+  .btn-letsgo {
+    width: 100%; padding: 16px 0 18px; border-radius: 16px; border: none;
+    font-family: 'Permanent Marker', cursive; font-size: 1.6250rem; font-weight: 400;
+    letter-spacing: 0.04em; color: #fff; cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), #ff8a5c);
+    box-shadow: 0 6px 20px rgba(255,107,53,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: all 0.25s var(--ease-out-expo);
+    text-shadow: 0 -1px 2px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.15);
+    margin-top: auto; flex-shrink: 0;
+    transform: rotate(-1.5deg);
+  }
+  .btn-letsgo:hover { transform: rotate(-1.5deg) translateY(-2px) scale(1.02); box-shadow: 0 10px 30px rgba(255,107,53,0.50); }
+  .btn-letsgo:active {
+    transform: rotate(-1.5deg) translateY(3px) scale(0.96);
+    box-shadow: 0 1px 4px rgba(255,107,53,0.20), inset 0 3px 6px rgba(0,0,0,0.18);
+  }
+  .btn-letsgo:disabled {
+    opacity: 0.35; cursor: not-allowed; transform: rotate(-1.5deg);
+    box-shadow: 0 2px 8px rgba(255,107,53,0.15);
+  }
+</style>
+</head>
+<body data-theme="high">
+
+<div class="device" data-theme="high" id="device">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="brand">
+      <svg class="brand-mark" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.65"/>
+        <circle cx="10" cy="3" r="1.2" fill="currentColor" opacity="0.9"/>
+      </svg>
+      <div>
+        <div class="brand-name">时肌</div>
+        <div class="brand-model">FT-01</div>
+      </div>
+    </div>
+    <div class="theme-toggle" id="themeToggle" title="切换主题">
+      <!-- Moon icon -->
+      <svg class="theme-icon moon-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15.5 10.5a6.5 6.5 0 1 1-8-8 5 5 0 0 0 8 8z"/>
+      </svg>
+      <div class="toggle-switch"><div class="toggle-thumb"></div></div>
+      <!-- Sun icon -->
+      <svg class="theme-icon sun-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="9" r="3"/>
+        <path d="M9 2V1M9 17v-1M2 9H1m16 0h-1M4.3 4.3l-.7-.7m12 12l-.7-.7M4.3 13.7l-.7.7m12-12l-.7.7"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Today's Stats Bar — always visible -->
+  <div class="daily-bar">
+    <div class="daily-item"><div class="daily-val" id="dailyTime">00:00</div><div class="daily-lbl">今日时长</div></div>
+    <div class="daily-sep"></div>
+    <div class="daily-item"><div class="daily-val" id="dailySets">0</div><div class="daily-lbl">今日组数</div></div>
+    <div class="daily-sep"></div>
+    <div class="daily-item"><div class="daily-val" id="dailyEx">0</div><div class="daily-lbl">今日动作</div></div>
+    <div class="daily-sep"></div>
+    <div class="daily-item"><div class="daily-val" id="dailyKcal">0</div><div class="daily-lbl">千卡</div></div>
+  </div>
+
+  <div class="views-area">
+
+    <!-- ═══════ SETUP VIEW (2.0) ═══════ -->
+    <div class="setup-view" id="setupView">
+      <div class="setup-title">今天想练点啥？</div>
+      <div class="setup-subtitle">快速模板</div>
+      <button class="setup-template-select" id="setupTemplateBtn">选择训练模板 ▼</button>
+      <div class="setup-subtitle">已选动作</div>
+      <div class="setup-list" id="setupList">
+        <div class="setup-empty">还没有动作，从上方选一个模板或点击新增</div>
+      </div>
+      <button class="btn-sm" id="btnSetupAdd" style="margin-bottom:14px;align-self:center;padding:10px 24px;">+ 新增动作</button>
+      <button class="btn-letsgo" id="btnLetsGo" disabled>LET'S GO</button>
+    </div>
+
+    <!-- ═══════ TIMER VIEW ═══════ -->
+    <div class="timer-view" id="timerView">
+      <div class="timer-section">
+        <div class="dial-container" id="dialContainer">
+          <div class="dial-bezel"></div>
+          <svg class="dial-svg" viewBox="0 0 232 232">
+            <circle class="ring-bg" cx="116" cy="116" r="108"/>
+            <!-- Dynamic path: start angle depends on timer duration, CCW to 12 o'clock -->
+            <path class="ring-progress" id="timerRing"
+              d="" pathLength="678.584"
+              stroke-dasharray="678.584 678.584"
+              stroke-dashoffset="0"/>
+          </svg>
+          <div class="tick-marks-layer" id="tickMarks"></div>
+          <div class="dial-glass"></div>
+          <div class="glass-highlight"></div>
+          <div class="dial-display">
+            <div class="dial-time" id="timerDisplay">00:45</div>
+            <div class="dial-label" id="timerPhaseLabel">准备</div>
+          </div>
+        </div>
+
+        <div class="info-panel">
+          <div class="info-cell">
+            <span class="info-cell-lbl">动作</span>
+            <span class="info-cell-val" id="cellExName" data-field="exName">卧推</span>
+          </div>
+          <div class="info-cell">
+            <span class="info-cell-lbl">时长</span>
+            <span class="info-cell-val" id="cellDuration" data-field="duration">45s</span>
+          </div>
+          <div class="info-cell">
+            <span class="info-cell-lbl">组数</span>
+            <span class="info-cell-val" id="cellSets" data-field="sets">
+              <span class="set-cur" id="setCurLabel">1</span><span class="set-sep">/</span><span id="setTotalLabel">5</span>
+            </span>
+          </div>
+          <div class="info-cell">
+            <span class="info-cell-lbl">休息</span>
+            <span class="info-cell-val" id="cellRest" data-field="rest">60s</span>
+          </div>
+        </div>
+
+        <div class="ex-actions">
+          <button class="btn-sm ghost" id="btnAddEx" title="新增动作">+ 新增动作</button>
+          <button class="btn-sm ghost" id="btnSaveTemplate" title="存为模板">存为模板</button>
+        </div>
+
+        <div class="template-area" id="templateArea" style="display:none;">
+          <button class="template-select" id="templateBtn" style="flex:1;text-align:left;">选择模板 ▼</button>
+        </div>
+
+        <div class="controls">
+          <!-- Left: Reset (grid-column:1) -->
+          <button class="btn-reset" id="btnReset" title="重置">
+            <svg class="btn-reset-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+          <!-- Center: Start (grid-column:2) -->
+          <div class="btn-start-wrap">
+            <button class="btn-start" id="btnStart">开始</button>
+          </div>
+          <!-- Right: Next set (grid-column:3) -->
+          <button class="btn-next" id="btnNextSet" title="下一组">
+            <svg class="btn-next-arrow" viewBox="0 0 28 28"><path d="M10 6l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="plan-ex-list" id="planExerciseList"></div>
+    </div>
+
+    <!-- ═══════ CALENDAR PLAN VIEW ═══════ -->
+    <div class="plan-view" id="planView">
+      <div class="cal-container">
+        <div class="cal-header">
+          <button class="cal-nav" id="calPrev">◀</button>
+          <div class="cal-month-title" id="calMonthTitle">2026年6月</div>
+          <button class="cal-nav" id="calNext">▶</button>
+        </div>
+        <div class="cal-weekdays">
+          <div class="cal-weekday">一</div><div class="cal-weekday">二</div>
+          <div class="cal-weekday">三</div><div class="cal-weekday">四</div>
+          <div class="cal-weekday">五</div><div class="cal-weekday">六</div>
+          <div class="cal-weekday">日</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="day-detail hidden" id="dayDetail"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ STATS VIEW ═══════ -->
+    <div class="stats-view" id="statsView">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-val" id="statsTotalTime">0h 0m</div><div class="stat-card-lbl">总训练时长</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="statsTotalSets">0</div><div class="stat-card-lbl">总完成组数</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="statsSessions">0</div><div class="stat-card-lbl">训练次数</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="statsStreak">0</div><div class="stat-card-lbl">连续天数</div></div>
+        <div class="stat-card full">
+          <div class="stat-card-lbl">本周完成数</div>
+          <div class="week-bar-container" id="weekBarContainer">
+            <div class="week-day-col"><div class="wd-label">一</div><div class="wd-track"><div class="wd-fill" id="wd0" style="height:0%"></div></div></div>
+            <div class="week-day-col"><div class="wd-label">二</div><div class="wd-track"><div class="wd-fill" id="wd1" style="height:0%"></div></div></div>
+            <div class="week-day-col"><div class="wd-label">三</div><div class="wd-track"><div class="wd-fill" id="wd2" style="height:0%"></div></div></div>
+            <div class="week-day-col"><div class="wd-label">四</div><div class="wd-track"><div class="wd-fill" id="wd3" style="height:0%"></div></div></div>
+            <div class="week-day-col"><div class="wd-label">五</div><div class="wd-track"><div class="wd-fill" id="wd4" style="height:0%"></div></div></div>
+            <div class="week-day-col"><div class="wd-label">六</div><div class="wd-track"><div class="wd-fill" id="wd5" style="height:0%"></div></div></div>
+            <div class="week-day-col"><div class="wd-label">日</div><div class="wd-track"><div class="wd-fill" id="wd6" style="height:0%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Dock Navigation -->
+  <div class="bottom-dock" id="bottomDock">
+    <div class="dock-option active" data-mode="timer">训练</div>
+    <div class="dock-option" data-mode="plan">计划</div>
+    <div class="dock-option" data-mode="stats">统计</div>
+  </div>
+
+  <!-- Rest Overlay -->
+  <div class="rest-overlay" id="restOverlay">
+    <div class="rest-label">休息时间</div>
+    <div class="rest-time" id="restTimerDisplay">60</div>
+    <button class="btn-skip" id="btnSkipRest">跳过休息</button>
+  </div>
+
+  <!-- Inline Dialog (replaces prompt) -->
+  <div class="inline-dialog-overlay" id="dialogOverlay">
+    <div class="inline-dialog-card">
+      <div class="inline-dialog-title" id="dialogTitle">新增动作</div>
+      <input class="inline-dialog-input" id="dialogInput" type="text" maxlength="12" placeholder="输入名称…">
+      <div class="inline-dialog-actions">
+        <button class="btn-sm" id="dialogCancel">取消</button>
+        <button class="btn-sm accent" id="dialogConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll Wheel (number picker) -->
+  <div class="scroll-wheel-overlay" id="scrollWheelOverlay">
+    <div class="scroll-wheel-card">
+      <div class="scroll-wheel-label" id="scrollWheelLabel">时长</div>
+      <div class="scroll-wheel-container" id="scrollWheelContainer">
+        <div class="scroll-wheel-indicator"></div>
+        <div class="scroll-wheel-track" id="scrollWheelTrack"></div>
+      </div>
+      <div class="scroll-wheel-unit" id="scrollWheelUnit">秒</div>
+      <div class="scroll-wheel-actions">
+        <button class="btn-sm" id="swCancel">取消</button>
+        <button class="btn-sm accent" id="swConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Picker -->
+  <div class="preset-overlay" id="templateOverlay">
+    <div class="preset-card" style="max-height:72%;">
+      <div class="preset-title">选择训练模板</div>
+      <div class="preset-list" id="templateList"></div>
+      <div class="preset-actions">
+        <button class="btn-sm" id="tplCancel">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preset Exercise Picker (two-level) -->
+  <div class="preset-overlay" id="presetOverlay">
+    <div class="preset-card">
+      <div class="preset-title" id="presetTitle">选择动作</div>
+      <div class="preset-level1" id="presetLevel1"></div>
+      <div class="preset-back" id="presetBack" style="display:none;">返回分类</div>
+      <div class="preset-list" id="presetList"></div>
+      <div class="preset-actions">
+        <button class="btn-sm" id="presetCancel">取消</button>
+        <button class="btn-sm accent" id="presetCustom">自定义</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option Picker Overlay -->
+  <div class="preset-overlay" id="optionOverlay" style="z-index:60;">
+    <div class="preset-card" style="width:240px;">
+      <div class="preset-title" id="optionTitle">选择</div>
+      <div class="menu-opt-list" id="optionList"></div>
+      <div class="preset-actions" style="margin-top:12px;">
+        <button class="btn-sm" id="optionCancel" style="flex:1;">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu Overlay -->
+  <div class="preset-overlay" id="menuOverlay">
+    <div class="preset-card" style="width:300px;">
+      <div class="menu-section" id="menuSettings">
+        <div class="preset-title">设置</div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">字号大小</div><div class="menu-row-hint">调整全局文字尺寸</div></div>
+          <button class="menu-opt-btn" id="setFontSize" data-val="1.0">中</button>
+        </div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">提示音</div><div class="menu-row-hint">倒计时和操作反馈音</div></div>
+          <div class="menu-toggle on" id="setSound"></div>
+        </div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">震动反馈</div><div class="menu-row-hint">滚轮和按键触感</div></div>
+          <div class="menu-toggle on" id="setVibrate"></div>
+        </div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">走时音效</div><div class="menu-row-hint">每秒轻柔滴答声</div></div>
+          <div class="menu-toggle on" id="setTick"></div>
+        </div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">默认时长</div></div>
+          <button class="menu-opt-btn" id="setDefDur" data-val="45">45s</button>
+        </div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">默认组数</div></div>
+          <button class="menu-opt-btn" id="setDefSets" data-val="4">4组</button>
+        </div>
+        <div class="menu-row">
+          <div><div class="menu-row-label">默认休息</div></div>
+          <button class="menu-opt-btn" id="setDefRest" data-val="60">60s</button>
+        </div>
+      </div>
+      <div class="menu-section" id="menuAbout" style="display:none;">
+        <div class="preset-title">关于</div>
+        <div class="menu-about">
+          <div class="menu-about-name">时肌</div>
+          <div class="menu-about-ver">v3.1 · 2026-06-06</div>
+          <div class="menu-about-line">作者：谭人玮</div>
+          <div class="menu-about-line">健身计时器 · 简洁高效</div>
+        </div>
+      </div>
+      <div class="preset-actions">
+        <button class="btn-sm" id="menuBtnAbout" style="flex:1;">关于</button>
+        <button class="btn-sm" id="menuBtnSettings" style="flex:1;">设置</button>
+        <button class="btn-sm accent" id="menuBtnClose" style="flex:1;">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exercise Edit Overlay -->
+  <div class="preset-overlay" id="exEditOverlay">
+    <div class="preset-card" style="width:270px;">
+      <div class="preset-title" id="exEditTitle">编辑动作</div>
+      <div class="exedit-btn-list">
+        <button class="exedit-btn" id="exEditDur">时长 45s</button>
+        <button class="exedit-btn" id="exEditSets">组数 4组</button>
+        <button class="exedit-btn danger" id="exEditDel">删除动作</button>
+      </div>
+      <div class="preset-actions">
+        <button class="btn-sm" id="exEditCancel" style="flex:1;">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+
+  const CIRCUM = 2 * Math.PI * 108;
+
+  /* ═══════ PRESETS ═══════ */
+  const PRESET_EXERCISES = {
+    '自重训练': [
+      { name: '深蹲', icon: '🦵', sets: 4, duration: 45, rest: 60 },
+      { name: '俯卧撑', icon: '💪', sets: 4, duration: 30, rest: 60 },
+      { name: '平板支撑', icon: '📐', sets: 3, duration: 45, rest: 45 },
+      { name: '箭步蹲', icon: '🦵', sets: 4, duration: 40, rest: 60 },
+      { name: '卷腹', icon: '📐', sets: 4, duration: 30, rest: 45 },
+      { name: '波比跳', icon: '💥', sets: 5, duration: 20, rest: 45 },
+      { name: '高抬腿', icon: '🔥', sets: 5, duration: 30, rest: 30 },
+      { name: '开合跳', icon: '⭐', sets: 5, duration: 30, rest: 30 },
+    ],
+    '哑铃训练': [
+      { name: '哑铃推举', icon: '🏋️', sets: 4, duration: 40, rest: 60 },
+      { name: '哑铃弯举', icon: '💪', sets: 4, duration: 30, rest: 60 },
+      { name: '哑铃飞鸟', icon: '🦅', sets: 4, duration: 35, rest: 60 },
+      { name: '哑铃划船', icon: '🚣', sets: 4, duration: 40, rest: 60 },
+      { name: '哑铃侧平举', icon: '🦋', sets: 4, duration: 30, rest: 45 },
+      { name: '哑铃深蹲', icon: '🦵', sets: 4, duration: 45, rest: 60 },
+      { name: '哑铃硬拉', icon: '🏋️', sets: 3, duration: 50, rest: 90 },
+      { name: '哑铃耸肩', icon: '🤷', sets: 4, duration: 30, rest: 45 },
+    ],
+    '杠铃训练': [
+      { name: '杠铃卧推', icon: '🏋️', sets: 4, duration: 40, rest: 90 },
+      { name: '杠铃深蹲', icon: '🦵', sets: 4, duration: 50, rest: 90 },
+      { name: '杠铃硬拉', icon: '🏋️', sets: 3, duration: 50, rest: 120 },
+      { name: '杠铃划船', icon: '🚣', sets: 4, duration: 40, rest: 90 },
+      { name: '杠铃推举', icon: '💪', sets: 4, duration: 35, rest: 90 },
+      { name: '杠铃弯举', icon: '💪', sets: 4, duration: 30, rest: 60 },
+      { name: '杠铃提踵', icon: '🦶', sets: 4, duration: 30, rest: 45 },
+      { name: '罗马尼亚硬拉', icon: '🏋️', sets: 3, duration: 45, rest: 90 },
+    ],
+    '壶铃训练': [
+      { name: '壶铃摆动', icon: '🔔', sets: 5, duration: 30, rest: 45 },
+      { name: '壶铃高脚杯深蹲', icon: '🦵', sets: 4, duration: 40, rest: 60 },
+      { name: '壶铃推举', icon: '💪', sets: 4, duration: 30, rest: 60 },
+      { name: '壶铃划船', icon: '🚣', sets: 4, duration: 35, rest: 60 },
+      { name: '壶铃抓举', icon: '⚡', sets: 4, duration: 25, rest: 60 },
+      { name: '壶铃土耳其起立', icon: '🧘', sets: 3, duration: 45, rest: 60 },
+      { name: '壶铃风车', icon: '🌪️', sets: 3, duration: 30, rest: 45 },
+      { name: '壶铃相扑深蹲', icon: '🦵', sets: 4, duration: 40, rest: 60 },
+    ],
+    '弹力带训练': [
+      { name: '弹力带面拉', icon: '🎯', sets: 4, duration: 30, rest: 45 },
+      { name: '弹力带划船', icon: '🚣', sets: 4, duration: 35, rest: 45 },
+      { name: '弹力带推胸', icon: '💪', sets: 4, duration: 30, rest: 45 },
+      { name: '弹力带侧平举', icon: '🦋', sets: 4, duration: 25, rest: 45 },
+      { name: '弹力带深蹲', icon: '🦵', sets: 4, duration: 40, rest: 60 },
+      { name: '弹力带臀桥', icon: '🍑', sets: 4, duration: 35, rest: 45 },
+      { name: '弹力带外展', icon: '🦵', sets: 4, duration: 25, rest: 45 },
+      { name: '弹力带弯举', icon: '💪', sets: 4, duration: 25, rest: 45 },
+    ],
+    '器械训练': [
+      { name: '坐姿推胸', icon: '🏋️', sets: 4, duration: 35, rest: 60 },
+      { name: '高位下拉', icon: '⬇️', sets: 4, duration: 35, rest: 60 },
+      { name: '腿举', icon: '🦵', sets: 4, duration: 45, rest: 90 },
+      { name: '腿屈伸', icon: '🦵', sets: 4, duration: 30, rest: 60 },
+      { name: '腿弯举', icon: '🦵', sets: 4, duration: 30, rest: 60 },
+      { name: '蝴蝶机夹胸', icon: '🦋', sets: 4, duration: 30, rest: 60 },
+      { name: '绳索下压', icon: '⬇️', sets: 4, duration: 25, rest: 45 },
+      { name: '器械划船', icon: '🚣', sets: 4, duration: 35, rest: 60 },
+    ],
+    '有氧 / HIIT': [
+      { name: '跳绳', icon: '🔗', sets: 5, duration: 45, rest: 30 },
+      { name: '登山跑', icon: '🏔️', sets: 5, duration: 30, rest: 30 },
+      { name: '深蹲跳', icon: '⬆️', sets: 5, duration: 20, rest: 30 },
+      { name: '滑冰跳', icon: '⛸️', sets: 5, duration: 25, rest: 30 },
+      { name: '快速冲拳', icon: '👊', sets: 5, duration: 30, rest: 30 },
+      { name: '侧向滑步', icon: '↔️', sets: 5, duration: 30, rest: 30 },
+      { name: '原地慢跑', icon: '🏃', sets: 1, duration: 300, rest: 0 },
+      { name: 'Tabata', icon: '⏱️', sets: 8, duration: 20, rest: 10 },
+    ],
+    '核心 / 腹肌': [
+      { name: '仰卧举腿', icon: '🦵', sets: 4, duration: 30, rest: 45 },
+      { name: '俄罗斯转体', icon: '🔄', sets: 4, duration: 30, rest: 45 },
+      { name: '死虫式', icon: '🐛', sets: 4, duration: 30, rest: 45 },
+      { name: '鸟狗式', icon: '🐦', sets: 4, duration: 30, rest: 45 },
+      { name: 'V字两头起', icon: '✌️', sets: 4, duration: 20, rest: 45 },
+      { name: '侧平板支撑', icon: '📐', sets: 3, duration: 30, rest: 45 },
+      { name: '悬垂举腿', icon: '🦵', sets: 4, duration: 25, rest: 60 },
+      { name: '平板支撑转体', icon: '🔄', sets: 3, duration: 30, rest: 45 },
+    ],
+  };
+
+  const PRESET_TEMPLATES = [
+    { name: '上肢力量训练', exercises: [{ name: '俯卧撑', sets: 4, duration: 30 }, { name: '哑铃推举', sets: 4, duration: 40 }, { name: '引体向上', sets: 4, duration: 30 }, { name: '哑铃弯举', sets: 4, duration: 30 }] },
+    { name: '下肢力量训练', exercises: [{ name: '深蹲', sets: 4, duration: 45 }, { name: '硬拉', sets: 3, duration: 50 }, { name: '箭步蹲', sets: 4, duration: 40 }, { name: '腿举', sets: 4, duration: 45 }] },
+    { name: '核心强化训练', exercises: [{ name: '平板支撑', sets: 3, duration: 45 }, { name: '卷腹', sets: 4, duration: 30 }, { name: '俄罗斯转体', sets: 4, duration: 30 }, { name: '仰卧举腿', sets: 4, duration: 30 }] },
+    { name: 'HIIT燃脂训练', exercises: [{ name: '波比跳', sets: 5, duration: 20 }, { name: '高抬腿', sets: 5, duration: 30 }, { name: '深蹲跳', sets: 5, duration: 20 }, { name: '登山跑', sets: 5, duration: 30 }] },
+    { name: '综合力量训练', exercises: [{ name: '深蹲', sets: 4, duration: 45 }, { name: '俯卧撑', sets: 4, duration: 30 }, { name: '硬拉', sets: 3, duration: 50 }, { name: '平板支撑', sets: 3, duration: 45 }] },
+    { name: '胸肌轰炸训练', exercises: [{ name: '杠铃卧推', sets: 4, duration: 40 }, { name: '哑铃飞鸟', sets: 4, duration: 35 }, { name: '俯卧撑', sets: 4, duration: 30 }, { name: '蝴蝶机夹胸', sets: 4, duration: 30 }] },
+    { name: '背部宽度训练', exercises: [{ name: '引体向上', sets: 4, duration: 30 }, { name: '高位下拉', sets: 4, duration: 35 }, { name: '杠铃划船', sets: 4, duration: 40 }, { name: '器械划船', sets: 4, duration: 35 }] },
+    { name: '肩部塑形训练', exercises: [{ name: '哑铃推举', sets: 4, duration: 35 }, { name: '哑铃侧平举', sets: 4, duration: 25 }, { name: '杠铃推举', sets: 4, duration: 35 }, { name: '弹力带面拉', sets: 4, duration: 30 }] },
+    { name: '手臂粗壮训练', exercises: [{ name: '杠铃弯举', sets: 4, duration: 30 }, { name: '绳索下压', sets: 4, duration: 25 }, { name: '哑铃弯举', sets: 4, duration: 30 }, { name: '窄距俯卧撑', sets: 4, duration: 25 }] },
+    { name: '臀腿塑形训练', exercises: [{ name: '深蹲', sets: 4, duration: 45 }, { name: '壶铃摆动', sets: 5, duration: 30 }, { name: '罗马尼亚硬拉', sets: 3, duration: 45 }, { name: '弹力带臀桥', sets: 4, duration: 35 }] },
+    { name: '壶铃全身训练', exercises: [{ name: '壶铃摆动', sets: 5, duration: 30 }, { name: '壶铃高脚杯深蹲', sets: 4, duration: 40 }, { name: '壶铃推举', sets: 4, duration: 30 }, { name: '壶铃抓举', sets: 4, duration: 25 }] },
+    { name: '弹力带居家训练', exercises: [{ name: '弹力带推胸', sets: 4, duration: 30 }, { name: '弹力带划船', sets: 4, duration: 35 }, { name: '弹力带深蹲', sets: 4, duration: 40 }, { name: '弹力带臀桥', sets: 4, duration: 35 }] },
+    { name: '徒手全身训练', exercises: [{ name: '深蹲', sets: 4, duration: 45 }, { name: '俯卧撑', sets: 4, duration: 30 }, { name: '平板支撑', sets: 3, duration: 45 }, { name: '箭步蹲', sets: 4, duration: 40 }] },
+    { name: '爆发力训练', exercises: [{ name: '深蹲跳', sets: 5, duration: 20 }, { name: '壶铃抓举', sets: 4, duration: 25 }, { name: '波比跳', sets: 5, duration: 20 }, { name: '滑冰跳', sets: 5, duration: 25 }] },
+    { name: '功能性训练', exercises: [{ name: '壶铃土耳其起立', sets: 3, duration: 45 }, { name: '死虫式', sets: 4, duration: 30 }, { name: '鸟狗式', sets: 4, duration: 30 }, { name: '壶铃风车', sets: 3, duration: 30 }] },
+    { name: '有氧耐力训练', exercises: [{ name: '原地慢跑', sets: 1, duration: 300 }, { name: '跳绳', sets: 5, duration: 45 }, { name: '开合跳', sets: 5, duration: 30 }, { name: '高抬腿', sets: 5, duration: 30 }] },
+    { name: '推力专项训练', exercises: [{ name: '杠铃卧推', sets: 4, duration: 40 }, { name: '杠铃推举', sets: 4, duration: 35 }, { name: '俯卧撑', sets: 4, duration: 30 }, { name: '哑铃推举', sets: 4, duration: 35 }] },
+    { name: '拉力专项训练', exercises: [{ name: '引体向上', sets: 4, duration: 30 }, { name: '杠铃划船', sets: 4, duration: 40 }, { name: '高位下拉', sets: 4, duration: 35 }, { name: '哑铃划船', sets: 4, duration: 40 }] },
+    { name: '超级组胸背训练', exercises: [{ name: '杠铃卧推', sets: 4, duration: 40 }, { name: '引体向上', sets: 4, duration: 30 }, { name: '哑铃飞鸟', sets: 4, duration: 35 }, { name: '杠铃划船', sets: 4, duration: 40 }] },
+    { name: '全身循环训练', exercises: [{ name: '深蹲', sets: 3, duration: 40 }, { name: '俯卧撑', sets: 3, duration: 25 }, { name: '哑铃划船', sets: 3, duration: 35 }, { name: '平板支撑', sets: 3, duration: 35 }, { name: '箭步蹲', sets: 3, duration: 35 }] },
+  ];
+
+  /* ═══════ STATE ═══════ */
+  const S = {
+    theme: 'high', mode: 'timer',
+    timerDur: 45, restDur: 60,
+    remaining: 45, running: false, rest: false,
+    curSet: 1, totalSets: 5,
+    curExIdx: 0, interval: null,
+    activePlan: null, planExIdx: 0,
+    soundOn: true, vibrateOn: true, tickOn: true,
+    fontScale: 1.0, defDur: 45, defSets: 4, defRest: 60,
+    daily: { date: '', sec: 0, sets: 0, ex: 0 },
+    allTime: { sec: 0, sets: 0, sessions: 0, streak: 0, lastDate: '' },
+    calData: {},
+    calMonth: '',
+    calSel: '',
+    todayDraft: null, // { name, exercises:[] } for setup view
+    ringPL: CIRCUM, // current pathLength for the ring arc
+    templates: {}, // { name: [{name, sets, duration}] }
+  };
+
+  /* ═══════ PERSIST ═══════ */
+  function save() {
+    localStorage.setItem('shiji_v10', JSON.stringify({
+      theme: S.theme, daily: S.daily, allTime: S.allTime,
+      activePlan: S.activePlan ? { id: S.activePlan.id, name: S.activePlan.name, exercises: S.activePlan.exercises } : null,
+      planExIdx: S.planExIdx,
+      timerDur: S.timerDur, restDur: S.restDur,
+      totalSets: S.totalSets, curSet: S.curSet, soundOn: S.soundOn,
+      calData: S.calData, templates: S.templates,
+      fontScale: S.fontScale, vibrateOn: S.vibrateOn, tickOn: S.tickOn,
+      defDur: S.defDur, defSets: S.defSets, defRest: S.defRest,
+    }));
+  }
+
+  function load() {
+    const raw = localStorage.getItem('shiji_v10');
+    if (!raw) return;
+    try {
+      const d = JSON.parse(raw);
+      if (d.theme) S.theme = d.theme;
+      if (d.daily) S.daily = d.daily;
+      if (d.allTime) S.allTime = d.allTime;
+      if (d.timerDur) S.timerDur = d.timerDur;
+      if (d.restDur) S.restDur = d.restDur;
+      if (d.totalSets) S.totalSets = d.totalSets;
+      if (d.curSet !== undefined) S.curSet = d.curSet;
+      if (d.soundOn !== undefined) S.soundOn = d.soundOn;
+      if (d.planExIdx !== undefined) S.planExIdx = d.planExIdx;
+      if (d.calData) S.calData = d.calData;
+      if (d.templates) S.templates = d.templates;
+      if (d.activePlan) S.activePlan = d.activePlan;
+      if (d.fontScale !== undefined) S.fontScale = d.fontScale;
+      if (d.vibrateOn !== undefined) S.vibrateOn = d.vibrateOn;
+      if (d.tickOn !== undefined) S.tickOn = d.tickOn;
+      if (d.defDur !== undefined) S.defDur = d.defDur;
+      if (d.defSets !== undefined) S.defSets = d.defSets;
+      if (d.defRest !== undefined) S.defRest = d.defRest;
+      S.remaining = S.timerDur;
+    } catch(e) {}
+  }
+
+  function dailyReset() {
+    const today = new Date().toISOString().slice(0,10);
+    if (S.daily.date !== today) {
+      S.daily = { date: today, sec: 0, sets: 0, ex: 0 };
+      S.curSet = 1; S.planExIdx = 0; save();
+    }
+    if (S.allTime.lastDate) {
+      const diff = Math.floor((new Date(today) - new Date(S.allTime.lastDate)) / 86400000);
+      S.allTime.streak = (diff === 1) ? S.allTime.streak + 1 : (diff > 1 ? 1 : S.allTime.streak);
+    } else { S.allTime.streak = 1; }
+  }
+
+  /* ═══════ RING PATH ═ CW from 12 o'clock to start angle ═══════?     Path direction: CW (sweep=1) from 12═?270°) to startDeg.
+     Dash starts at 12°and extends CW. When dash shrinks, the end
+     retreats backwards along CW = visually CCW. This is what the user wants:
+     red arc retreats counterclockwise from the start position toward 12°
+     Key: path always ends at 12 o'clock; visibleLen controls the arc length. */
+  function makeRingPath(timerDur) {
+    const cx = 116, cy = 116, r = 108;
+    const svg12 = 270;
+    // For durations > 60s, use full 360° circle (display handles per-minute chunks)
+    let arcDeg = timerDur >= 60 ? 360 : timerDur * 6;
+    if (arcDeg === 0) arcDeg = 360;
+    const startDeg = (svg12 + arcDeg) % 360;
+    const toRad = d => d * Math.PI / 180;
+    const sx = cx + r * Math.cos(toRad(svg12));
+    const sy = cy + r * Math.sin(toRad(svg12));
+    const ex = cx + r * Math.cos(toRad(startDeg));
+    const ey = cy + r * Math.sin(toRad(startDeg));
+
+    const pathLength = CIRCUM * arcDeg / 360;
+
+    if (arcDeg >= 360) {
+      // Full circle: two 180° halves, CW
+      const midDeg = (svg12 + 180) % 360;
+      const mx = cx + r * Math.cos(toRad(midDeg));
+      const my = cy + r * Math.sin(toRad(midDeg));
+      return { d: `M ${sx.toFixed(2)},${sy.toFixed(2)} A ${r},${r} 0 1,1 ${mx.toFixed(2)},${my.toFixed(2)} A ${r},${r} 0 1,1 ${sx.toFixed(2)},${sy.toFixed(2)}`, pl: pathLength };
+    }
+    const largeArc = arcDeg > 180 ? 1 : 0;
+    return {
+      d: `M ${sx.toFixed(2)},${sy.toFixed(2)} A ${r},${r} 0 ${largeArc},1 ${ex.toFixed(2)},${ey.toFixed(2)}`,
+      pl: pathLength
+    };
+  }
+
+  /* ═══════ TICKS ═ CW from 12═?toward startDeg, same direction as ring path ═══════*/
+
+  /* Helper: apply ring path (d + pathLength) and rebuild ticks */
+  function applyRingPath(timerDur) {
+    const rp = makeRingPath(timerDur);
+    $('#timerRing').setAttribute('d', rp.d);
+    $('#timerRing').setAttribute('pathLength', rp.pl);
+    S.ringPL = rp.pl;
+    buildTicks(timerDur);
+  }
+
+  function buildTicks(timerDur) {
+    const container = $('#tickMarks');
+    let html = '';
+    // Always 60 ticks = full 360°, major at 0/30/60/...
+    for (let i = 0; i < 60; i++) {
+      const deg = i * 6;
+      let cls = 'tick';
+      if (i % 5 === 0) cls += ' major';
+      html += `<div class="${cls}" style="transform:rotate(${deg}deg);"></div>`;
+    }
+    container.innerHTML = html;
+  }
+
+  /* ═══════ TIMER ═══════ */
+  function fmt(t) {
+    const m = Math.floor(t/60), s = t%60;
+    return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+
+  function beep() {
+    if (!S.soundOn) return;
+    try {
+      const a = new (window.AudioContext||window.webkitAudioContext)();
+      const o = a.createOscillator(), g = a.createGain();
+      o.connect(g); g.connect(a.destination);
+      o.type='sine'; o.frequency.value=880;
+      g.gain.setValueAtTime(0.12, a.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, a.currentTime+0.25);
+      o.start(); o.stop(a.currentTime+0.25);
+    } catch(e){}
+  }
+
+  /* Ring: <path> with pathLength = arc length. visibleLen shrinks proportionally.
+     Path goes CW from 12°to startDeg. Dash at 12°end retreats CW = visually CCW. */
+  function updateRing() {
+    const total = S.rest ? S.restDur : S.timerDur;
+    let remaining = Math.max(0, S.remaining);
+    // Ring always cycles per 60s; full duration determines cycles count
+    if (total > 60) {
+      remaining = (remaining - 1) % 60 + 1; // 60→1 per cycle
+    }
+    const visibleLen = S.ringPL * (remaining / Math.min(total, 60));
+    $('#timerRing').setAttribute('stroke-dasharray', visibleLen + ' ' + S.ringPL);
+
+    const ring = $('#timerRing');
+    ring.classList.toggle('rest', S.rest);
+    ring.classList.toggle('warning-phase', !S.rest && remaining <= 10 && S.running);
+    $('#timerPhaseLabel').classList.toggle('warning', remaining <= 10 && S.running && !S.rest);
+  }
+
+  function updateDisplay() {
+    // Display always shows actual remaining seconds (MM:SS)
+    $('#timerDisplay').textContent = fmt(S.remaining);
+    updateRing();
+  }
+
+  function startRest() {
+    S.rest = true; S.remaining = S.restDur; S.running = true;
+    applyRingPath(S.restDur);
+    updateDisplay();
+    $('#timerPhaseLabel').textContent = '休息';
+    $('#btnStart').textContent = '暂停'; $('#btnStart').classList.add('running');
+    tick();
+  }
+
+  function stopRest() {
+    S.rest = false; S.running = false;
+    S.remaining = S.timerDur;
+    applyRingPath(S.timerDur);
+    updateDisplay();
+    $('#timerPhaseLabel').textContent = '准备';
+    $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+  }
+
+  function tick() {
+    clearInterval(S.interval);
+    S.interval = setInterval(() => {
+      if (!S.running) return;
+      S.remaining--;
+      if (S.remaining <= 5 && S.remaining > 0) beep();
+      else softTick();
+      updateDisplay();
+      if (S.remaining <= 0) {
+        clearInterval(S.interval); S.interval = null;
+        if (S.rest) {
+          // Rest finished → continue with next set of SAME exercise
+          stopRest(); beep(); beep();
+          S.running = false; S.remaining = S.timerDur;
+          updateDisplay();
+          $('#timerPhaseLabel').textContent = '准备';
+          $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+          updateUI(); save();
+        } else {
+          // Workout set finished
+          S.running = false; beep(); beep();
+          S.daily.sets++; S.allTime.sets++;
+          S.daily.sec += S.timerDur; S.allTime.sec += S.timerDur;
+          markTodayExDone();
+          if (S.curSet < S.totalSets) {
+            // More sets for current exercise → rest then repeat
+            S.curSet++;
+            startRest();
+          } else {
+            // All sets of current exercise done → next exercise
+            S.daily.ex++; S.curSet = 1;
+            if (S.activePlan && S.planExIdx < S.activePlan.exercises.length - 1) {
+              S.planExIdx++;
+              const e = S.activePlan.exercises[S.planExIdx];
+              S.timerDur = e.duration; S.totalSets = e.sets;
+              S.remaining = S.timerDur;
+              applyRingPath(S.timerDur);
+            }
+            updateDisplay();
+            $('#timerPhaseLabel').textContent = '完成';
+            $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+            updateUI(); save();
+          }
+        }
+      }
+    }, 1000);
+  }
+
+  function markTodayExDone() {
+    const today = new Date().toISOString().slice(0,10);
+    if (S.activePlan && S.activePlan.exercises[S.planExIdx]) {
+      const exName = S.activePlan.exercises[S.planExIdx].name;
+      if (!S.calData[today]) S.calData[today] = [];
+      const entry = S.calData[today].find(e => e.name === exName && !e.done);
+      if (entry) entry.done = true;
+      else S.calData[today].push({ name: exName, sets: S.totalSets, duration: S.timerDur, done: true });
+    }
+  }
+
+  function nextEx() {
+    if (S.activePlan && S.planExIdx < S.activePlan.exercises.length - 1) {
+      S.planExIdx++;
+      const e = S.activePlan.exercises[S.planExIdx];
+      S.timerDur = e.duration; S.totalSets = e.sets;
+      S.curSet = 1; S.remaining = S.timerDur;
+      applyRingPath(S.timerDur);
+    }
+    S.running = false; updateDisplay();
+    $('#timerPhaseLabel').textContent = '准备';
+    $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+    updateUI(); save();
+  }
+
+  function toggle() {
+    if (S.rest) return;
+    if (S.running) {
+      S.running = false; clearInterval(S.interval); S.interval = null;
+      $('#btnStart').textContent = '继续'; $('#btnStart').classList.remove('running');
+      $('#timerPhaseLabel').textContent = '暂停';
+      $('#timerRing').classList.remove('warning-phase');
+    } else {
+      S.running = true;
+      $('#timerPhaseLabel').textContent = '训练中';
+      $('#btnStart').textContent = '暂停'; $('#btnStart').classList.add('running');
+      tick();
+    }
+  }
+
+  function reset() {
+    stopRest();
+    S.running = false; S.remaining = S.timerDur; S.curSet = 1;
+    if (S.activePlan) {
+      S.planExIdx = 0;
+      const e = S.activePlan.exercises[0];
+      S.timerDur = e.duration; S.totalSets = e.sets; S.remaining = S.timerDur;
+    }
+    clearInterval(S.interval); S.interval = null;
+    $('#timerRing').classList.remove('warning-phase');
+    updateDisplay();
+    $('#timerPhaseLabel').textContent = '准备';
+    $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+    updateUI(); save();
+  }
+
+  function nextSet() {
+    if (S.rest) { stopRest(); updateUI(); save(); return; }
+    if (S.running) { S.running = false; clearInterval(S.interval); S.interval = null; }
+    S.daily.sets++; S.allTime.sets++;
+    S.daily.sec += (S.timerDur - S.remaining); S.allTime.sec += (S.timerDur - S.remaining);
+    markTodayExDone();
+    if (S.curSet < S.totalSets) { startRest(); }
+    else {
+      S.daily.ex++; S.curSet = 1;
+      if (S.activePlan && S.planExIdx < S.activePlan.exercises.length - 1) {
+        S.planExIdx++;
+        const e = S.activePlan.exercises[S.planExIdx];
+        S.timerDur = e.duration; S.totalSets = e.sets; S.remaining = S.timerDur;
+        applyRingPath(S.timerDur);
+      } else { S.remaining = S.timerDur; }
+      updateUI(); save();
+    }
+  }
+
+  /* ═══════ UI ═══════ */
+  function refreshInfoCells() {
+    // Update cell displays from state
+    const ex = S.activePlan?.exercises?.[S.planExIdx];
+    $('#cellExName').textContent = ex ? ex.name : '';
+    $('#cellDuration').textContent = S.timerDur + 's';
+    // Rebuild sets cell inner HTML — child spans get destroyed during inline editing,
+    // so updateNode references (#setCurLabel / #setTotalLabel) are unreliable.
+    $('#cellSets').innerHTML = '<span class="set-cur" id="setCurLabel">' + S.curSet + '</span><span class="set-sep">/</span><span id="setTotalLabel">' + S.totalSets + '</span>';
+    $('#cellRest').textContent = S.restDur + 's';
+  }
+
+  function updateUI() {
+    refreshInfoCells();
+    $('#dailyTime').textContent = fmt(S.daily.sec);
+    $('#dailySets').textContent = S.daily.sets;
+    $('#dailyEx').textContent = S.daily.ex;
+    $('#dailyKcal').textContent = Math.floor(S.daily.sec * 0.12);
+    const m = Math.floor(S.allTime.sec / 60);
+    $('#statsTotalTime').textContent = Math.floor(m/60) + 'h ' + (m%60) + 'm';
+    $('#statsTotalSets').textContent = S.allTime.sets;
+    $('#statsSessions').textContent = S.allTime.sessions;
+    $('#statsStreak').textContent = S.allTime.streak;
+    const weekDates = getWeekDates();
+    weekDates.forEach((date, i) => {
+      const exercises = S.calData[date] || [];
+      const total = exercises.length;
+      const done = exercises.filter(e => e.done).length;
+      const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+      const fill = $(`#wd${i}`);
+      if (fill) fill.style.height = pct + '%';
+    });
+    renderPlanExList();
+    refreshTemplateSelect();
+    updateRing();
+  }
+
+  function renderPlanExList() {
+    const el = $('#planExerciseList');
+    if (!S.activePlan) { el.classList.remove('visible'); return; }
+    el.classList.add('visible');
+    el.innerHTML = S.activePlan.exercises.map((e, i) => {
+      let cls = 'plan-ex-row';
+      if (i === S.planExIdx && S.running) cls += ' current';
+      if (i < S.planExIdx) cls += ' done';
+      const chk = i < S.planExIdx ? '<span class="pe-check">✓</span>' : '';
+      return `<div class="${cls}" data-idx="${i}"><span class="pe-name">${e.name}</span><span class="pe-info">${e.sets}组 × ${e.duration}s</span>${chk}</div>`;
+    }).join('');
+    const renderFn = () => { renderPlanExList(); };
+    if (!S.running) makeDraggable(el, S.activePlan.exercises, renderFn);
+    el.querySelectorAll('.plan-ex-row').forEach(row => {
+      row.addEventListener('click', () => {
+        if (S.running || _dragActive) return;
+        const idx = parseInt(row.dataset.idx);
+        showExEdit(idx);
+      });
+    });
+  }
+
+  /* ═══════ SCROLL WHEEL ═══════ */
+  const ITEM_H = 44; // height of each item
+  const DUR_VALUES = (() => { const a = []; for (let i = 1; i <= 59; i++) a.push(i); for (let m = 1; m <= 10; m++) a.push(m * 60); return a; })();
+
+  let _swResolve = null;
+  let _swCurrent = 0, _swMin = 0, _swMax = 100, _swValues = null;
+  let _swLastVal = 0;
+
+  // Drag / inertia state
+  let _swDragging = false;
+  let _swStartY = 0;
+  let _swTrackY = 0;       // current translateY of track
+  let _swVelocity = 0;     // px/ms
+  let _swLastTime = 0;
+  let _swLastY = 0;
+  let _swRafId = null;
+
+  function tickSound() {
+    try {
+      const a = new (window.AudioContext||window.webkitAudioContext)();
+      const o = a.createOscillator(), g = a.createGain();
+      o.connect(g); g.connect(a.destination);
+      o.type = 'sine'; o.frequency.value = 1200;
+      g.gain.setValueAtTime(0.08, a.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + 0.04);
+      o.start(); o.stop(a.currentTime + 0.04);
+    } catch(e) {}
+  }
+
+  // Soft tick using preloaded MP3 via Web Audio API
+  let _tickCtx = null, _tickBuffer = null;
+  async function loadTickSound() {
+    try {
+      _tickCtx = new (window.AudioContext||window.webkitAudioContext)();
+      const resp = await fetch('tick.mp3');
+      const arrayBuf = await resp.arrayBuffer();
+      _tickBuffer = await _tickCtx.decodeAudioData(arrayBuf);
+    } catch(e) { _tickBuffer = null; }
+  }
+  function softTick() {
+    if (!S.tickOn || !_tickBuffer || !_tickCtx) return;
+    try {
+      const src = _tickCtx.createBufferSource();
+      src.buffer = _tickBuffer;
+      const g = _tickCtx.createGain();
+      g.gain.value = 0.3;
+      src.connect(g); g.connect(_tickCtx.destination);
+      src.start(_tickCtx.currentTime);
+      // Play full 1s tick
+      src.stop(_tickCtx.currentTime + 1.0);
+    } catch(e) {}
+  }
+
+  function vibrateShort() {
+    if (!S.vibrateOn) return;
+    try { if (navigator.vibrate) navigator.vibrate(6); } catch(e) {}
+  }
+
+  function getTrackY() {
+    const match = $('#scrollWheelTrack').style.transform.match(/translateY\(([-\d.]+)px\)/);
+    return match ? parseFloat(match[1]) : 0;
+  }
+
+  function setTrackY(y, animate) {
+    const track = $('#scrollWheelTrack');
+    track.style.transition = animate ? 'transform 0.35s cubic-bezier(0.16,1,0.3,1)' : 'none';
+    track.style.transform = 'translateY(' + y + 'px)';
+    _swTrackY = y;
+  }
+
+  // Get the value closest to the center of the visible window
+  function valueAtCenter() {
+    const containerH = $('#scrollWheelContainer').offsetHeight || 170;
+    const centerY = containerH / 2;
+    // Items start at _swTrackY in container coords, each is ITEM_H tall
+    // item index i is at top: _swTrackY + i * ITEM_H
+    // item center: _swTrackY + i * ITEM_H + ITEM_H/2
+    // We want: _swTrackY + i * ITEM_H + ITEM_H/2 = centerY
+    // i = (centerY - ITEM_H/2 - _swTrackY) / ITEM_H
+    const items = Array.from($('#scrollWheelTrack').querySelectorAll('.scroll-wheel-item[data-val]'));
+    if (!items.length) return _swCurrent;
+
+    // Find which item's center is closest to containerH/2
+    let best = items[0], bestDist = Infinity;
+    items.forEach(item => {
+      const containerRect = $('#scrollWheelContainer').getBoundingClientRect();
+      const rect = item.getBoundingClientRect();
+      const ic = rect.top + rect.height / 2 - containerRect.top;
+      const d = Math.abs(ic - centerY);
+      if (d < bestDist) { bestDist = d; best = item; }
+    });
+    return parseInt(best.dataset.val);
+  }
+
+  function snapToValue(val) {
+    const values = _swValues || buildRange(_swMin, _swMax);
+    _swCurrent = closestInValues(val, values);
+    const prevVal = _swLastVal;
+    renderWheelTrack(_swCurrent, values, true);
+    if (_swCurrent !== prevVal) {
+      _swLastVal = _swCurrent;
+      tickSound();
+      vibrateShort();
+    }
+  }
+
+  // Inertia animation loop
+  function inertiaStep(ts) {
+    if (!_swDragging) {
+      _swVelocity *= 0.92; // friction
+      const newY = getTrackY() + _swVelocity;
+      setTrackY(newY, false);
+
+      if (Math.abs(_swVelocity) < 0.5) {
+        // Come to rest — snap to nearest value
+        const val = valueAtCenter();
+        snapToValue(val);
+        _swRafId = null;
+        return;
+      }
+    }
+    _swRafId = requestAnimationFrame(inertiaStep);
+  }
+
+  function buildWheelItems(current, values) {
+    const idx = values.indexOf(current);
+    if (idx === -1) return values;
+    const range = 12;
+    const start = Math.max(0, idx - range);
+    const end = Math.min(values.length - 1, idx + range);
+    return values.slice(start, end + 1);
+  }
+
+  function renderWheelTrack(current, values, animate) {
+    const track = $('#scrollWheelTrack');
+    const items = buildWheelItems(current, values);
+    const idx = items.indexOf(current);
+    const padTop = idx >= 0 ? idx : 0;
+    const padBot = items.length - 1 - padTop;
+
+    let html = '';
+    for (let i = 0; i < padTop; i++) html += '<div class="scroll-wheel-item">&nbsp;</div>';
+    items.forEach(v => {
+      const cls = v === current ? 'scroll-wheel-item selected' : 'scroll-wheel-item';
+      html += `<div class="${cls}" data-val="${v}">${v}</div>`;
+    });
+    for (let i = 0; i < padBot; i++) html += '<div class="scroll-wheel-item">&nbsp;</div>';
+
+    track.innerHTML = html;
+    const containerH = $('#scrollWheelContainer').offsetHeight || 170;
+    const selectedIdx = padTop + (idx >= 0 ? idx : 0);
+    const offset = (containerH - ITEM_H) / 2 - selectedIdx * ITEM_H;
+    setTrackY(offset, animate || false);
+  }
+
+  function showScrollWheel(label, unit, current, minOrValues, max) {
+    return new Promise(resolve => {
+      _swResolve = resolve;
+      _swCurrent = current;
+      _swLastVal = current;
+      _swVelocity = 0;
+      if (_swRafId) { cancelAnimationFrame(_swRafId); _swRafId = null; }
+      // Accept value array or min/max range
+      if (Array.isArray(minOrValues)) {
+        _swValues = minOrValues;
+        _swMin = minOrValues[0];
+        _swMax = minOrValues[minOrValues.length - 1];
+      } else {
+        _swValues = null;
+        _swMin = minOrValues;
+        _swMax = max;
+      }
+      $('#scrollWheelLabel').textContent = label;
+      $('#scrollWheelUnit').textContent = unit;
+      $('#scrollWheelOverlay').classList.add('active');
+      const values = _swValues || buildRange(_swMin, _swMax);
+      requestAnimationFrame(() => renderWheelTrack(current, values, false));
+    });
+  }
+
+  function buildRange(min, max) {
+    const arr = [];
+    for (let v = min; v <= max; v++) arr.push(v);
+    return arr;
+  }
+
+  // Find closest value in the values array
+  function closestInValues(val, values) {
+    if (!values || !values.length) return val;
+    let best = values[0], bestDist = Math.abs(values[0] - val);
+    for (const v of values) {
+      const d = Math.abs(v - val);
+      if (d < bestDist) { bestDist = d; best = v; }
+    }
+    return best;
+  }
+
+  function hideScrollWheel(confirmed) {
+    if (_swRafId) { cancelAnimationFrame(_swRafId); _swRafId = null; }
+    $('#scrollWheelOverlay').classList.remove('active');
+    if (_swResolve) {
+      _swResolve(confirmed ? _swCurrent : null);
+      _swResolve = null;
+    }
+  }
+
+  /* ── Touch + Pointer drag ── */
+  const swContainer = $('#scrollWheelContainer');
+
+  function swDragStart(y) {
+    if (_swRafId) { cancelAnimationFrame(_swRafId); _swRafId = null; }
+    _swDragging = true;
+    _swStartY = y;
+    _swLastY = y;
+    _swLastTime = performance.now();
+    _swVelocity = 0;
+  }
+
+  function swDragMove(y) {
+    if (!_swDragging) return;
+    const dy = y - _swLastY;
+    const dt = performance.now() - _swLastTime;
+    if (dt > 0) _swVelocity = dy / dt * 16;
+    _swLastY = y;
+    _swLastTime = performance.now();
+    setTrackY(getTrackY() + dy, false);
+  }
+
+  function swDragEnd(y) {
+    if (!_swDragging) return;
+    _swDragging = false;
+    if (Math.abs(y - _swStartY) < 6) {
+      snapToValue(valueAtCenter());
+      return;
+    }
+    _swRafId = requestAnimationFrame(inertiaStep);
+  }
+
+  // Pointer events (desktop + modern mobile)
+  swContainer.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    swContainer.setPointerCapture(e.pointerId);
+    swDragStart(e.clientY);
+  }, { passive: false });
+
+  swContainer.addEventListener('pointermove', e => {
+    swDragMove(e.clientY);
+  }, { passive: true });
+
+  swContainer.addEventListener('pointerup', e => {
+    swContainer.releasePointerCapture(e.pointerId);
+    swDragEnd(e.clientY);
+  }, { passive: true });
+
+  swContainer.addEventListener('pointercancel', e => {
+    swContainer.releasePointerCapture(e.pointerId);
+    _swDragging = false;
+    snapToValue(valueAtCenter());
+  });
+
+  // Touch events (fallback for Android WebView)
+  swContainer.addEventListener('touchstart', e => {
+    if (e.target.closest('.scroll-wheel-actions')) return;
+    e.preventDefault();
+    swDragStart(e.touches[0].clientY);
+  }, { passive: false });
+
+  swContainer.addEventListener('touchmove', e => {
+    if (!_swDragging) return;
+    e.preventDefault();
+    swDragMove(e.touches[0].clientY);
+  }, { passive: false });
+
+  swContainer.addEventListener('touchend', e => {
+    if (!_swDragging) return;
+    swDragEnd(_swLastY);
+  }, { passive: true });
+
+  /* ── Mouse wheel ── */
+  let _swWheelTimeout;
+  swContainer.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (_swRafId) { cancelAnimationFrame(_swRafId); _swRafId = null; }
+    const step = Math.round(e.deltaY / 50); // 1 step per ~50px scroll
+    const newVal = Math.max(_swMin, Math.min(_swMax, _swCurrent + step));
+    if (newVal !== _swCurrent) snapToValue(newVal);
+  }, { passive: false });
+
+  /* ── Buttons ── */
+  $('#swConfirm').onclick = () => hideScrollWheel(true);
+  $('#swCancel').onclick = () => hideScrollWheel(false);
+  $('#scrollWheelOverlay').addEventListener('click', e => {
+    if (e.target === $('#scrollWheelOverlay')) hideScrollWheel(false);
+  });
+  /* ═══════ INLINE EDITING (text only; numbers use scroll wheel) ═══════*/
+  function makeEditable(cellEl, applyFn) {
+    if (cellEl.classList.contains('editing')) return;
+    cellEl.classList.add('editing');
+    const oldHTML = cellEl.innerHTML;
+    const currentVal = cellEl.textContent.trim();
+
+    const input = document.createElement('input');
+    input.type = 'text'; input.className = 'info-cell-input';
+    input.value = currentVal; input.maxLength = 12;
+
+    while (cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
+    cellEl.appendChild(input);
+    input.focus();
+    input.select();
+
+    const commit = () => {
+      const v = input.value.trim();
+      if (!v) { cellEl.innerHTML = oldHTML; cellEl.classList.remove('editing'); return; }
+      try { applyFn(v); } catch(e) { cellEl.innerHTML = oldHTML; }
+      refreshInfoCells();
+      cellEl.classList.remove('editing');
+    };
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { input.blur(); }
+      if (e.key === 'Escape') { cellEl.innerHTML = oldHTML; cellEl.classList.remove('editing'); }
+    });
+  }
+
+  async function handleCellEdit(field) {
+    const ex = S.activePlan?.exercises?.[S.planExIdx];
+    switch (field) {
+      case 'exName': {
+        const name = (ex ? ex.name : '动作') || '动作';
+        makeEditable($('#cellExName'), v => {
+          if (ex) ex.name = v;
+          else {
+            if (!S.activePlan) { S.activePlan = { id: 'ad-hoc', name: '自由训练', exercises: [{ name: v, sets: S.totalSets, duration: S.timerDur }] }; S.planExIdx = 0; }
+            else if (!S.activePlan.exercises) { S.activePlan.exercises = [{ name: v, sets: S.totalSets, duration: S.timerDur }]; }
+            else if (!S.activePlan.exercises[S.planExIdx]) { S.activePlan.exercises.push({ name: v, sets: S.totalSets, duration: S.timerDur }); }
+          }
+          save();
+        });
+        break;
+      }
+      case 'duration': {
+        const val = await showScrollWheel('动作时长', '秒', S.timerDur, DUR_VALUES);
+        if (val !== null && val !== S.timerDur) {
+          S.timerDur = val; S.remaining = val;
+          if (ex) ex.duration = val;
+          applyRingPath(val); updateDisplay();
+          refreshInfoCells(); save();
+        }
+        break;
+      }
+      case 'sets': {
+        const val = await showScrollWheel('总组数', '组', S.totalSets, 1, 30);
+        if (val !== null && val !== S.totalSets) {
+          S.totalSets = val;
+          if (S.curSet > S.totalSets) S.curSet = 1;
+          if (ex) ex.sets = val;
+          refreshInfoCells(); save();
+        }
+        break;
+      }
+      case 'rest': {
+        const val = await showScrollWheel('休息时长', '秒', S.restDur, DUR_VALUES);
+        if (val !== null && val !== S.restDur) {
+          S.restDur = val;
+          $('#restTimerDisplay').textContent = val;
+          refreshInfoCells(); save();
+        }
+        break;
+      }
+    }
+  }
+
+  /* ═══════ INLINE DIALOG ═══════ */
+  let _dialogResolve = null;
+
+  function showDialog(title, placeholder, defaultValue) {
+    return new Promise(resolve => {
+      _dialogResolve = resolve;
+      $('#dialogTitle').textContent = title;
+      $('#dialogInput').value = defaultValue || '';
+      $('#dialogInput').placeholder = placeholder || '';
+      $('#dialogOverlay').classList.add('active');
+      setTimeout(() => $('#dialogInput').focus(), 50);
+    });
+  }
+
+  function hideDialog(value) {
+    $('#dialogOverlay').classList.remove('active');
+    if (_dialogResolve) { _dialogResolve(value); _dialogResolve = null; }
+  }
+
+  $('#dialogConfirm').onclick = () => hideDialog($('#dialogInput').value.trim());
+  $('#dialogCancel').onclick = () => hideDialog(null);
+  $('#dialogInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('#dialogConfirm').click();
+    if (e.key === 'Escape') $('#dialogCancel').click();
+  });
+  $('#dialogOverlay').addEventListener('click', e => {
+    if (e.target === $('#dialogOverlay')) $('#dialogCancel').click();
+  });
+
+  /* ═══════ PRESET PICKER (two-level) ═══════ */
+  let _presetResolve = null;
+
+  /* ═══════ TEMPLATE PICKER ═══════ */
+  let _tplResolve = null;
+
+  function showTemplatePicker() {
+    return new Promise(resolve => {
+      _tplResolve = resolve;
+      const list = $('#templateList');
+      let html = '';
+      // Preset templates
+      if (PRESET_TEMPLATES.length) {
+        html += '<div class="preset-divider">预设模板</div>';
+        PRESET_TEMPLATES.forEach((t, i) => {
+          html += `<div class="preset-item" data-tidx="${i}">
+            <div class="preset-info">
+              <div class="preset-name">${t.name}</div>
+              <div class="preset-meta">${t.exercises.length} 个动作</div>
+            </div>
+          </div>`;
+        });
+      }
+      // User templates
+      const userNames = Object.keys(S.templates).sort();
+      if (userNames.length) {
+        html += '<div class="preset-divider">我的模板</div>';
+        userNames.forEach(n => {
+          html += `<div class="preset-item" data-user="${n}">
+            <div class="preset-info">
+              <div class="preset-name">${n}</div>
+              <div class="preset-meta">${S.templates[n].length} 个动作</div>
+            </div>
+          </div>`;
+        });
+      }
+      list.innerHTML = html;
+      list.querySelectorAll('.preset-item').forEach(el => {
+        el.onclick = () => {
+          if (el.dataset.tidx !== undefined) {
+            hideTemplatePicker(PRESET_TEMPLATES[parseInt(el.dataset.tidx)]);
+          } else {
+            const n = el.dataset.user;
+            const exs = S.templates[n];
+            hideTemplatePicker({ name: n, exercises: exs.map(e => ({ ...e })) });
+          }
+        };
+      });
+      $('#templateOverlay').classList.add('active');
+    });
+  }
+
+  function hideTemplatePicker(value) {
+    $('#templateOverlay').classList.remove('active');
+    if (_tplResolve) { _tplResolve(value); _tplResolve = null; }
+  }
+
+  $('#tplCancel').onclick = () => hideTemplatePicker(null);
+  $('#templateOverlay').addEventListener('click', e => {
+    if (e.target === $('#templateOverlay')) hideTemplatePicker(null);
+  });
+
+  /* ═══════ PRESET PICKER (two-level) ═══════ */
+  function showPresetPicker() {
+    return new Promise(resolve => {
+      _presetResolve = resolve;
+      showPresetLevel1();
+      $('#presetOverlay').classList.add('active');
+    });
+  }
+
+  function showPresetLevel1() {
+    $('#presetTitle').textContent = '选择动作';
+    $('#presetLevel1').style.display = 'grid';
+    $('#presetBack').style.display = 'none';
+    $('#presetList').innerHTML = '';
+    const cats = Object.keys(PRESET_EXERCISES);
+    $('#presetLevel1').innerHTML = cats.map(cat =>
+      `<button class="preset-cat-btn" data-cat="${cat}">${cat}</button>`
+    ).join('');
+    $('#presetLevel1').querySelectorAll('.preset-cat-btn').forEach(btn => {
+      btn.onclick = () => showPresetLevel2(btn.dataset.cat);
+    });
+  }
+
+  function showPresetLevel2(cat) {
+    $('#presetTitle').textContent = cat;
+    $('#presetLevel1').style.display = 'none';
+    $('#presetBack').style.display = 'flex';
+    const list = $('#presetList');
+    const exercises = PRESET_EXERCISES[cat] || [];
+    list.innerHTML = exercises.map((ex, i) =>
+      `<div class="preset-item" data-cat="${cat}" data-idx="${i}">
+        <div class="preset-info">
+          <div class="preset-name">${ex.name}</div>
+          <div class="preset-meta">${ex.sets}组 × ${ex.duration}s · 休息${ex.rest}s</div>
+        </div>
+      </div>`
+    ).join('');
+    list.querySelectorAll('.preset-item').forEach(el => {
+      el.onclick = () => {
+        const c = el.dataset.cat;
+        const idx = parseInt(el.dataset.idx);
+        hidePresetPicker(PRESET_EXERCISES[c][idx]);
+      };
+    });
+  }
+
+  $('#presetBack').onclick = showPresetLevel1;
+
+  function hidePresetPicker(value) {
+    $('#presetOverlay').classList.remove('active');
+    if (_presetResolve) { _presetResolve(value); _presetResolve = null; }
+  }
+
+  $('#presetCancel').onclick = () => hidePresetPicker(null);
+  $('#presetCustom').onclick = async () => {
+    hidePresetPicker(null);
+    const name = await showDialog('新增动作', '输入动作名称…', '新动作');
+    if (!name) return;
+    addExerciseCore(name, S.defSets, S.defDur);
+  };
+  $('#presetOverlay').addEventListener('click', e => {
+    if (e.target === $('#presetOverlay')) hidePresetPicker(null);
+  });
+
+  function addExerciseCore(name, sets, duration) {
+    if (!S.activePlan) {
+      S.activePlan = { id: 'ad-hoc', name: '自由训练', exercises: [] };
+      S.planExIdx = 0;
+    }
+    if (!S.activePlan.exercises) S.activePlan.exercises = [];
+    S.activePlan.exercises.push({ name, sets, duration });
+    updateUI(); save();
+  }
+
+  /* ═══════ EXERCISE EDIT ═══════ */
+  let _exEditIdx = null;
+  let _exEditSource = null; // 'activePlan' | 'todayDraft'
+
+  function showExEdit(idx) {
+    if (!S.activePlan || !S.activePlan.exercises[idx]) return;
+    _exEditIdx = idx;
+    _exEditSource = 'activePlan';
+    const ex = S.activePlan.exercises[idx];
+    $('#exEditTitle').textContent = ex.name;
+    $('#exEditDur').textContent = '时长 ' + ex.duration + 's';
+    $('#exEditSets').textContent = '组数 ' + ex.sets + '组';
+    $('#exEditOverlay').classList.add('active');
+  }
+
+  function hideExEdit() {
+    $('#exEditOverlay').classList.remove('active');
+    _exEditIdx = null;
+    _exEditSource = null;
+  }
+
+  $('#exEditCancel').onclick = hideExEdit;
+  $('#exEditOverlay').addEventListener('click', e => {
+    if (e.target === $('#exEditOverlay')) hideExEdit();
+  });
+
+  /* ═══════ ADD EXERCISE ═══════ */
+  async function addExercise() {
+    const preset = await showPresetPicker();
+    if (!preset) return;
+    addExerciseCore(preset.name, preset.sets, preset.duration);
+  }
+
+  /* ═══════ TEMPLATES ═══════ */
+  async function saveTemplate() {
+    const exs = S.activePlan?.exercises;
+    if (!exs || exs.length === 0) { alert('请先添加动作再存为模板');; return; }
+    const name = await showDialog('存为模板', '模板名称', S.activePlan?.name || '');
+    if (!name) return;
+    S.templates[name] = exs.map(e => ({ name: e.name, sets: e.sets, duration: e.duration }));
+    refreshTemplateSelect();
+    save();
+  }
+
+  async function loadTemplate() {
+    const tpl = await showTemplatePicker();
+    if (!tpl) return;
+    loadTemplateCore(tpl);
+  }
+
+  function loadTemplateCore(tpl) {
+    S.activePlan = { id: 'tpl-' + tpl.name, name: tpl.name, exercises: tpl.exercises.map(e => ({ ...e })) };
+    S.planExIdx = 0;
+    const e = tpl.exercises[0];
+    S.timerDur = e.duration; S.totalSets = e.sets; S.remaining = S.timerDur;
+    S.curSet = 1;
+    S.running = false; clearInterval(S.interval); S.interval = null;
+    $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+    $('#timerPhaseLabel').textContent = '准备';
+    applyRingPath(S.timerDur);
+    updateUI(); save();
+  }
+
+  function refreshTemplateSelect() {
+    const btn = $('#templateBtn');
+    if (!btn) return;
+    btn.onclick = loadTemplate;
+    $('#templateArea').style.display = 'flex';
+  }
+  function calMonthStr(y, m) { return y + '-' + String(m+1).padStart(2,'0'); }
+
+  function getToday() { return new Date().toISOString().slice(0,10); }
+
+  function getWeekDates() {
+    const today = new Date();
+    const day = today.getDay(); // 0=Sun, 1=Mon...
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(today);
+    monday.setDate(diff);
+    monday.setHours(0,0,0,0);
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      dates.push(d.toISOString().slice(0, 10));
+    }
+    return dates;
+  }
+
+  function renderCalendar() {
+    if (!S.calMonth) {
+      const now = new Date();
+      S.calMonth = calMonthStr(now.getFullYear(), now.getMonth());
+    }
+    const [y,m] = S.calMonth.split('-').map(Number);
+    $('#calMonthTitle').textContent = y + '年' + (m) + '月';
+
+    const firstDay = new Date(y, m-1, 1).getDay();
+    const daysInMonth = new Date(y, m, 0).getDate();
+    let startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+
+    const today = getToday();
+    let html = '';
+    for (let i = 0; i < startOffset; i++) html += '<div class="cal-day empty"></div>';
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ds = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      const isToday = ds === today;
+      const isSel = ds === S.calSel;
+      let cls = 'cal-day';
+      if (isToday) cls += ' today';
+      if (isSel) cls += ' selected';
+
+      const entries = S.calData[ds] || [];
+      const doneCount = entries.filter(e => e.done).length;
+      const planCount = entries.filter(e => !e.done).length;
+
+      let dots = '';
+      for (let j = 0; j < Math.min(doneCount, 2); j++) dots += '<span class="cal-dot done"></span>';
+      for (let j = 0; j < Math.min(planCount, 2); j++) dots += '<span class="cal-dot plan"></span>';
+      const totalDots = Math.min(doneCount, 2) + Math.min(planCount, 2);
+      if (entries.length > totalDots) dots += '<span style="font-size: 0.4375rem;color:var(--text-dim)">…</span>';
+
+      html += `<div class="${cls}" data-date="${ds}">
+        <div class="cal-day-num">${d}</div>
+        ${dots ? '<div class="cal-day-dots">' + dots + '</div>' : ''}
+      </div>`;
+    }
+
+    $('#calGrid').innerHTML = html;
+
+    $$('.cal-day:not(.empty)').forEach(el => el.onclick = () => {
+      S.calSel = el.dataset.date;
+      renderCalendar();
+      renderDayDetail();
+    });
+
+    if (S.calSel && S.calSel.startsWith(S.calMonth)) renderDayDetail();
+    else { S.calSel = ''; $('#dayDetail').classList.add('hidden'); }
+  }
+
+  function renderDayDetail() {
+    if (!S.calSel) { $('#dayDetail').classList.add('hidden'); return; }
+    const el = $('#dayDetail');
+    el.classList.remove('hidden');
+    const entries = S.calData[S.calSel] || [];
+
+    const isToday = S.calSel === getToday();
+    let title = S.calSel + (isToday ? ' · 今天' : '');
+    let body = '';
+
+    if (entries.length === 0) {
+      body = '<div class="day-detail-empty">这天还没有安排</div>';
+    } else {
+      body = entries.map((e,i) => {
+        const doneCls = e.done ? ' done' : '';
+        const doneMark = e.done ? '✓' : '';
+        return `<div class="day-ex-row">
+          <span class="day-ex-check${doneCls}" data-idx="${i}">${doneMark}</span>
+          <span class="day-ex-name">${e.name}</span>
+          <span class="day-ex-info">${e.sets}组 × ${e.duration}s</span>
+          <button class="btn-sm danger del-ex" data-idx="${i}" title="删除">×</button>
+        </div>`;
+      }).join('');
+    }
+
+    el.innerHTML = `
+      <div class="day-detail-title">${title}</div>
+      <div class="day-template-bar">
+        <button class="day-template-select" id="dayTemplateBtn">选择训练模板 ▼</button>
+        <button class="day-add-preset-btn" id="btnDayAddEx">+ 新增动作</button>
+      </div>
+      ${body}
+    `;
+
+    // Template button -> custom picker
+    $('#dayTemplateBtn').onclick = async () => {
+      const tpl = await showTemplatePicker();
+      if (!tpl) return;
+      if (!S.calData[S.calSel]) S.calData[S.calSel] = [];
+      tpl.exercises.forEach(ex => {
+        S.calData[S.calSel].push({ name: ex.name, sets: ex.sets, duration: ex.duration, done: false });
+      });
+      renderCalendar(); renderDayDetail(); save();
+    };
+
+    // + 新增动作 -> preset picker
+    $('#btnDayAddEx').onclick = async () => {
+      const preset = await showPresetPicker();
+      if (!preset) return;
+      if (!S.calData[S.calSel]) S.calData[S.calSel] = [];
+      S.calData[S.calSel].push({ name: preset.name, sets: preset.sets, duration: preset.duration, done: false });
+      renderCalendar(); renderDayDetail(); save();
+    };
+
+    $$('.day-ex-check').forEach(chk => {
+      chk.onclick = () => {
+        const i = parseInt(chk.dataset.idx);
+        if (S.calData[S.calSel] && S.calData[S.calSel][i]) {
+          S.calData[S.calSel][i].done = !S.calData[S.calSel][i].done;
+          renderCalendar(); renderDayDetail(); save();
+        }
+      };
+    });
+
+    $$('.del-ex').forEach(btn => {
+      btn.onclick = () => {
+        const i = parseInt(btn.dataset.idx);
+        S.calData[S.calSel].splice(i, 1);
+        if (S.calData[S.calSel].length === 0) delete S.calData[S.calSel];
+        renderCalendar(); renderDayDetail(); save();
+      };
+    });
+
+    if (isToday && entries.length > 0) {
+      const loadBtn = document.createElement('button');
+      loadBtn.className = 'btn-sm accent';
+      loadBtn.style.cssText = 'margin-top:8px;width:100%;';
+      loadBtn.textContent = '载入计时';
+      loadBtn.onclick = () => {
+        const todayEntries = S.calData[getToday()] || [];
+        if (!todayEntries.length) return;
+        S.activePlan = { id: 'cal', name: '日历计划', exercises: todayEntries };
+        S.planExIdx = 0;
+        S.timerDur = todayEntries[0].duration;
+        S.totalSets = todayEntries[0].sets;
+        S.remaining = S.timerDur;
+        S.curSet = 1;
+        S.running = false; clearInterval(S.interval); S.interval = null;
+        $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+        applyRingPath(S.timerDur);
+        updateUI(); save();
+        switchMode('timer');
+      };
+      el.appendChild(loadBtn);
+    }
+  }
+
+  /* ═══════ MODE ═══════ */
+  function switchMode(m) {
+    S.mode = m;
+    $$('.dock-option').forEach(o => o.classList.remove('active'));
+    document.querySelector(`.dock-option[data-mode="${m}"]`)?.classList.add('active');
+    $('#setupView').classList.remove('active');
+    $('#timerView').className = 'timer-view' + (m !== 'timer' ? ' hidden' : '');
+    $('#planView').className = 'plan-view' + (m === 'plan' ? ' active' : '');
+    $('#statsView').className = 'stats-view' + (m === 'stats' ? ' active' : '');
+    if (m === 'timer') { applyRingPath(S.timerDur); updateDisplay(); }
+    if (m === 'plan') renderCalendar();
+    if (m === 'stats') updateUI();
+  }
+
+  /* ═══════ THEME ═══════ */
+  function toggleTheme() {
+    S.theme = S.theme === 'low' ? 'high' : 'low';
+    document.body.setAttribute('data-theme', S.theme);
+    $('#device').setAttribute('data-theme', S.theme);
+    save();
+  }
+
+  /* ═══════ MENU ═══════ */
+  const FONT_SIZE_OPTS = [{v:'0.9',l:'小'},{v:'1.0',l:'中'},{v:'1.15',l:'大'}];
+  const DUR_OPTS = [{v:'20',l:'20s'},{v:'30',l:'30s'},{v:'45',l:'45s'},{v:'60',l:'60s'},{v:'90',l:'90s'}];
+  const SETS_OPTS = [{v:'2',l:'2组'},{v:'3',l:'3组'},{v:'4',l:'4组'},{v:'5',l:'5组'},{v:'6',l:'6组'}];
+  const REST_OPTS = [{v:'30',l:'30s'},{v:'45',l:'45s'},{v:'60',l:'60s'},{v:'90',l:'90s'},{v:'120',l:'120s'}];
+
+  function showMenu() {
+    showMenuTab('settings');
+    $('#menuOverlay').classList.add('active');
+    updateMenuOptBtn('setFontSize', FONT_SIZE_OPTS, S.fontScale);
+    updateMenuToggle('setSound', S.soundOn);
+    updateMenuToggle('setVibrate', S.vibrateOn);
+    updateMenuToggle('setTick', S.tickOn);
+    updateMenuOptBtn('setDefDur', DUR_OPTS, S.defDur);
+    updateMenuOptBtn('setDefSets', SETS_OPTS, S.defSets);
+    updateMenuOptBtn('setDefRest', REST_OPTS, S.defRest);
+  }
+  function hideMenu() { $('#menuOverlay').classList.remove('active'); }
+  function showMenuTab(tab) {
+    $('#menuSettings').style.display = tab === 'settings' ? '' : 'none';
+    $('#menuAbout').style.display = tab === 'about' ? '' : 'none';
+    $('#menuBtnSettings').style.display = tab === 'settings' ? 'none' : '';
+    $('#menuBtnAbout').style.display = tab === 'about' ? 'none' : '';
+  }
+  function updateMenuToggle(id, on) {
+    $(`#${id}`).classList.toggle('on', on);
+  }
+  function updateMenuOptBtn(id, opts, val) {
+    const btn = $('#' + id);
+    const found = opts.find(o => parseFloat(o.v) === parseFloat(val));
+    btn.textContent = found ? found.l : val;
+    btn.dataset.val = val;
+  }
+
+  // Option picker (replaces native select)
+  let _optResolve = null;
+  function showOptionPicker(title, opts, current) {
+    return new Promise(resolve => {
+      _optResolve = resolve;
+      $('#optionTitle').textContent = title;
+      $('#optionList').innerHTML = opts.map(o =>
+        `<div class="menu-opt-item${String(o.v) === String(current) ? ' selected' : ''}" data-v="${o.v}">${o.l}</div>`
+      ).join('');
+      $('#optionList').querySelectorAll('.menu-opt-item').forEach(el => {
+        el.onclick = () => { hideOptionPicker(el.dataset.v); };
+      });
+      $('#optionOverlay').classList.add('active');
+    });
+  }
+  function hideOptionPicker(value) {
+    $('#optionOverlay').classList.remove('active');
+    if (_optResolve) { _optResolve(value); _optResolve = null; }
+  }
+  $('#optionCancel').onclick = () => hideOptionPicker(null);
+  $('#optionOverlay').addEventListener('click', e => {
+    if (e.target === $('#optionOverlay')) hideOptionPicker(null);
+  });
+
+  // Menu event handlers
+  $('#menuOverlay').addEventListener('click', e => {
+    if (e.target === $('#menuOverlay')) hideMenu();
+  });
+  $('#menuBtnClose').onclick = hideMenu;
+  $('#menuBtnSettings').onclick = () => showMenuTab('settings');
+  $('#menuBtnAbout').onclick = () => showMenuTab('about');
+
+  $('#setFontSize').onclick = async function() {
+    const v = await showOptionPicker('字号大小', FONT_SIZE_OPTS, S.fontScale);
+    if (v) { S.fontScale = parseFloat(v); updateMenuOptBtn('setFontSize', FONT_SIZE_OPTS, S.fontScale); document.documentElement.style.fontSize = (16 * S.fontScale) + 'px'; save(); }
+  };
+  $('#setSound').onclick = function() {
+    S.soundOn = !S.soundOn; updateMenuToggle('setSound', S.soundOn); save();
+  };
+  $('#setVibrate').onclick = function() {
+    S.vibrateOn = !S.vibrateOn; updateMenuToggle('setVibrate', S.vibrateOn); save();
+  };
+  $('#setTick').onclick = function() {
+    S.tickOn = !S.tickOn; updateMenuToggle('setTick', S.tickOn); save();
+  };
+  $('#setDefDur').onclick = async function() {
+    const v = await showScrollWheel('默认时长', '秒', S.defDur, DUR_VALUES);
+    if (v !== null) { S.defDur = v; updateMenuOptBtn('setDefDur', DUR_OPTS, S.defDur); save(); }
+  };
+  $('#setDefSets').onclick = async function() {
+    const v = await showScrollWheel('默认组数', '组', S.defSets, 1, 30);
+    if (v !== null) { S.defSets = v; updateMenuOptBtn('setDefSets', SETS_OPTS, S.defSets); save(); }
+  };
+  $('#setDefRest').onclick = async function() {
+    const v = await showScrollWheel('默认休息', '秒', S.defRest, DUR_VALUES);
+    if (v !== null) { S.defRest = v; updateMenuOptBtn('setDefRest', REST_OPTS, S.defRest); save(); }
+  };
+
+  // Brand click -> menu
+  $('.brand').onclick = showMenu;
+
+  // Apply font scale on init
+  function applyFontScale() {
+    document.documentElement.style.fontSize = (16 * S.fontScale) + 'px';
+  }
+
+  /* ═══════ EVENTS ═══════ */
+  $('#bottomDock').onclick = e => {
+    const o = e.target.closest('.dock-option');
+    if (o) switchMode(o.dataset.mode);
+  };
+  $('#btnStart').onclick = toggle;
+  $('#btnReset').onclick = reset;
+  $('#btnNextSet').onclick = nextSet;
+  $('#btnSkipRest').onclick = () => { if (S.running) { S.running = false; clearInterval(S.interval); S.interval = null; } nextSet(); };
+  $('#themeToggle').onclick = toggleTheme;
+
+  // Inline editing cells
+  ['cellExName','cellDuration','cellSets','cellRest'].forEach(id => {
+    const el = $('#' + id);
+    if (el) el.onclick = () => handleCellEdit(el.dataset.field);
+  });
+
+  // Add exercise & save template
+  $('#btnAddEx').onclick = addExercise;
+  $('#btnSaveTemplate').onclick = saveTemplate;
+  $('#btnSetupAdd').onclick = setupAddExercise;
+  $('#btnLetsGo').onclick = letsGo;
+
+  $('#calPrev').onclick = () => {
+    const [y,m] = S.calMonth.split('-').map(Number);
+    const d = new Date(y, m-2, 1);
+    S.calMonth = calMonthStr(d.getFullYear(), d.getMonth());
+    S.calSel = '';
+    renderCalendar();
+  };
+  $('#calNext').onclick = () => {
+    const [y,m] = S.calMonth.split('-').map(Number);
+    const d = new Date(y, m, 1);
+    S.calMonth = calMonthStr(d.getFullYear(), d.getMonth());
+    S.calSel = '';
+    renderCalendar();
+  };
+
+  document.onkeydown = e => {
+    if (e.target.tagName === 'INPUT') return;
+    switch(e.key) {
+      case ' ': e.preventDefault(); toggle(); break;
+      case 'r': case 'R': reset(); break;
+      case 'n': case 'N': nextSet(); break;
+      case 's': case 'S': if (S.rest) nextSet(); break;
+    }
+  };
+
+  /* ═══════ SETUP VIEW (2.0) ═══════ */
+  function showSetupView() {
+    $('#timerView').classList.add('hidden');
+    $('#planView').classList.remove('active');
+    $('#statsView').classList.remove('active');
+    $('#setupView').classList.add('active');
+    const today = getToday();
+    const hasPlan = (S.calData[today] || []).length > 0;
+    $('#setupView').querySelector('.setup-title').textContent = '今天想练点啥？';
+    renderSetupList();
+  }
+
+  function showTimerView() {
+    $('#setupView').classList.remove('active');
+    $('#timerView').classList.remove('hidden');
+    $('#planView').classList.remove('active');
+    $('#statsView').classList.remove('active');
+    applyRingPath(S.timerDur);
+    updateDisplay(); updateUI();
+  }
+
+  function renderSetupTemplates() {
+    const btn = $('#setupTemplateBtn');
+    if (!btn) return;
+    btn.onclick = async () => {
+      const tpl = await showTemplatePicker();
+      if (!tpl) return;
+      const tidx = PRESET_TEMPLATES.indexOf(tpl);
+      setupLoadTemplate(tidx);
+    };
+  }
+
+  /* ═══════ DRAG TO REORDER ═══════ */
+  let _dragList = null, _dragItems = null, _dragIdx = -1, _dragClone = null;
+  let _dragLongTimer = null, _dragActive = false;
+  const DRAG_LONG_MS = 380;
+
+  function findRowAt(x, y) {
+    // Hide clone temporarily so it doesn't block hit-test
+    if (_dragClone) _dragClone.style.display = 'none';
+    const target = document.elementFromPoint(x, y);
+    if (_dragClone) _dragClone.style.display = '';
+    return target?.closest('.setup-row, .plan-ex-row') || null;
+  }
+
+  function makeDraggable(listEl, items, renderFn) {
+    const rows = listEl.querySelectorAll('.setup-row, .plan-ex-row');
+    rows.forEach(row => {
+      row.addEventListener('touchstart', e => {
+        if (_dragActive) return;
+        const idx = parseInt(row.dataset.idx);
+        _dragLongTimer = setTimeout(() => {
+          _dragActive = true;
+          _dragList = listEl;
+          _dragItems = items;
+          _dragIdx = idx;
+          row.classList.add('dragging');
+          _dragClone = document.createElement('div');
+          _dragClone.className = 'drag-clone';
+          _dragClone.innerHTML = '<span class="drag-clone-name">' + items[idx].name + '</span><span class="drag-clone-info">' + items[idx].sets + '组 × ' + items[idx].duration + 's</span>';
+          _dragClone.style.left = e.touches[0].clientX + 'px';
+          _dragClone.style.top = e.touches[0].clientY + 'px';
+          document.body.appendChild(_dragClone);
+          if (navigator.vibrate) navigator.vibrate(10);
+        }, DRAG_LONG_MS);
+      }, { passive: true });
+    });
+
+    // Global touchmove on the list element
+    listEl.addEventListener('touchmove', e => {
+      if (!_dragActive) return;
+      e.preventDefault();
+      _dragClone.style.left = e.touches[0].clientX + 'px';
+      _dragClone.style.top = e.touches[0].clientY + 'px';
+      // Clear all indicators
+      const rowsNow = listEl.querySelectorAll('.setup-row, .plan-ex-row');
+      rowsNow.forEach(r => { r.classList.remove('drop-before','drop-after'); });
+      listEl.classList.remove('drop-top','drop-bottom');
+      // Find row under finger (clone hidden during hit-test)
+      const targetRow = findRowAt(e.touches[0].clientX, e.touches[0].clientY);
+      if (targetRow && parseInt(targetRow.dataset.idx) !== _dragIdx) {
+        const rect = targetRow.getBoundingClientRect();
+        const cy = e.touches[0].clientY;
+        if (cy < rect.top + rect.height / 2) targetRow.classList.add('drop-before');
+        else targetRow.classList.add('drop-after');
+      } else if (!targetRow) {
+        const firstRow = rowsNow[0];
+        const lastRow = rowsNow[rowsNow.length - 1];
+        if (firstRow && e.touches[0].clientY < firstRow.getBoundingClientRect().top) listEl.classList.add('drop-top');
+        if (lastRow && e.touches[0].clientY > lastRow.getBoundingClientRect().bottom) listEl.classList.add('drop-bottom');
+      }
+    }, { passive: false });
+
+    listEl.addEventListener('touchend', e => {
+      clearTimeout(_dragLongTimer);
+      if (!_dragActive) return;
+      // Determine drop target FIRST (before clearing indicators which shift layout)
+      const cy = e.changedTouches[0].clientY;
+      const cx = e.changedTouches[0].clientX;
+      let insertIdx = -1;
+      const targetRow = findRowAt(cx, cy);
+      const rowsNow = listEl.querySelectorAll('.setup-row, .plan-ex-row');
+      if (targetRow) {
+        insertIdx = parseInt(targetRow.dataset.idx);
+        const rect = targetRow.getBoundingClientRect();
+        if (cy >= rect.top + rect.height / 2) insertIdx++;
+      } else {
+        const firstRow = rowsNow[0];
+        const lastRow = rowsNow[rowsNow.length - 1];
+        if (firstRow && cy < firstRow.getBoundingClientRect().top) insertIdx = 0;
+        else if (lastRow && cy > lastRow.getBoundingClientRect().bottom) insertIdx = _dragItems.length;
+      }
+      // Now clean up
+      _dragActive = false;
+      rowsNow.forEach(r => { r.classList.remove('dragging','drop-before','drop-after'); });
+      listEl.classList.remove('drop-top','drop-bottom');
+      if (_dragClone) { _dragClone.remove(); _dragClone = null; }
+      // Perform the move
+      if (insertIdx >= 0 && insertIdx <= _dragItems.length && insertIdx !== _dragIdx) {
+        const ex = _dragItems.splice(_dragIdx, 1)[0];
+        if (insertIdx > _dragIdx) insertIdx--;
+        _dragItems.splice(insertIdx, 0, ex);
+        renderFn();
+        save();
+      }
+      _dragList = null; _dragItems = null; _dragIdx = -1;
+    }, { passive: true });
+
+    listEl.addEventListener('touchcancel', () => {
+      clearTimeout(_dragLongTimer);
+      _dragActive = false;
+      const rowsNow = listEl.querySelectorAll('.setup-row, .plan-ex-row');
+      rowsNow.forEach(r => { r.classList.remove('dragging','drop-before','drop-after'); });
+      if (_dragClone) { _dragClone.remove(); _dragClone = null; }
+      _dragList = null; _dragItems = null; _dragIdx = -1;
+    });
+  }
+
+  function renderSetupList() {
+    const list = $('#setupList');
+    const exercises = S.todayDraft?.exercises || [];
+    if (exercises.length === 0) {
+      list.innerHTML = '<div class="setup-empty">还没有动作，从上方选一个模板或点击新增</div>';
+    } else {
+      list.innerHTML = exercises.map((e, i) =>
+        `<div class="setup-row" data-idx="${i}">
+          <span class="sr-name">${e.name}</span>
+          <span class="sr-info">${e.sets}组 × ${e.duration}s</span>
+        </div>`
+      ).join('');
+      makeDraggable(list, exercises, renderSetupList);
+      list.querySelectorAll('.setup-row').forEach(row => {
+        row.onclick = () => {
+          if (_dragActive) return;
+          const idx = parseInt(row.dataset.idx);
+          showExEditInSetup(idx);
+        };
+      });
+    }
+    $('#btnLetsGo').disabled = exercises.length === 0;
+  }
+
+  async function setupAddExercise() {
+    const preset = await showPresetPicker();
+    if (!preset) return;
+    if (!S.todayDraft) S.todayDraft = { name: '今日计划', exercises: [] };
+    S.todayDraft.exercises.push({ name: preset.name, sets: preset.sets, duration: preset.duration });
+    renderSetupList();
+  }
+
+  function setupLoadTemplate(tidx) {
+    const tpl = PRESET_TEMPLATES[tidx];
+    if (!tpl) return;
+    if (!S.todayDraft) S.todayDraft = { name: tpl.name, exercises: [] };
+    S.todayDraft.name = tpl.name;
+    S.todayDraft.exercises = tpl.exercises.map(e => ({ ...e }));
+    renderSetupList();
+  }
+
+  function showExEditInSetup(idx) {
+    if (!S.todayDraft || !S.todayDraft.exercises[idx]) return;
+    _exEditIdx = idx;
+    _exEditSource = 'todayDraft';
+    const ex = S.todayDraft.exercises[idx];
+    $('#exEditTitle').textContent = ex.name;
+    $('#exEditDur').textContent = '时长 ' + ex.duration + 's';
+    $('#exEditSets').textContent = '组数 ' + ex.sets + '组';
+    $('#exEditOverlay').classList.add('active');
+  }
+
+  $('#exEditDur').onclick = async () => {
+    if (_exEditIdx === null) return;
+    const source = _exEditSource === 'todayDraft' ? S.todayDraft : S.activePlan;
+    if (!source || !source.exercises[_exEditIdx]) return;
+    const ex = source.exercises[_exEditIdx];
+    const val = await showScrollWheel('动作时长', '秒', ex.duration, DUR_VALUES);
+    if (val !== null && val !== ex.duration) {
+      ex.duration = val;
+      if (_exEditSource === 'todayDraft') renderSetupList();
+      else {
+        if (_exEditIdx === S.planExIdx) { S.timerDur = val; S.remaining = val; }
+        updateUI(); save();
+      }
+    }
+    hideExEdit();
+  };
+
+  $('#exEditSets').onclick = async () => {
+    if (_exEditIdx === null) return;
+    const source = _exEditSource === 'todayDraft' ? S.todayDraft : S.activePlan;
+    if (!source || !source.exercises[_exEditIdx]) return;
+    const ex = source.exercises[_exEditIdx];
+    const val = await showScrollWheel('总组数', '组', ex.sets, 1, 30);
+    if (val !== null && val !== ex.sets) {
+      ex.sets = val;
+      if (_exEditSource === 'todayDraft') renderSetupList();
+      else {
+        if (_exEditIdx === S.planExIdx) S.totalSets = val;
+        updateUI(); save();
+      }
+    }
+    hideExEdit();
+  };
+
+  $('#exEditDel').onclick = () => {
+    if (_exEditIdx === null) return;
+    const source = _exEditSource === 'todayDraft' ? S.todayDraft : S.activePlan;
+    if (!source || !source.exercises[_exEditIdx]) return;
+    source.exercises.splice(_exEditIdx, 1);
+    if (_exEditSource === 'todayDraft') { renderSetupList(); hideExEdit(); return; }
+    // deleting from activePlan
+    if (S.planExIdx >= S.activePlan.exercises.length) S.planExIdx = Math.max(0, S.activePlan.exercises.length - 1);
+    if (S.activePlan.exercises.length === 0) {
+      S.activePlan = null; S.planExIdx = 0;
+      S.timerDur = 45; S.totalSets = 4; S.remaining = 45; S.curSet = 1;
+    } else {
+      const e = S.activePlan.exercises[S.planExIdx];
+      S.timerDur = e.duration; S.totalSets = e.sets; S.remaining = e.duration; S.curSet = 1;
+    }
+    S.running = false; clearInterval(S.interval); S.interval = null;
+    $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+    $('#timerPhaseLabel').textContent = '准备';
+    applyRingPath(S.timerDur);
+    updateUI(); save();
+    hideExEdit();
+  };
+
+  function letsGo() {
+    if (!S.todayDraft || S.todayDraft.exercises.length === 0) return;
+    const today = getToday();
+    // Save to calendar
+    S.calData[today] = S.todayDraft.exercises.map(e => ({ name: e.name, sets: e.sets, duration: e.duration, done: false }));
+    // Load as active plan
+    S.activePlan = { id: 'cal', name: S.todayDraft.name, exercises: S.todayDraft.exercises.map(e => ({ ...e })) };
+    S.planExIdx = 0;
+    S.timerDur = S.activePlan.exercises[0].duration;
+    S.totalSets = S.activePlan.exercises[0].sets;
+    S.remaining = S.timerDur; S.curSet = 1;
+    S.running = false; clearInterval(S.interval); S.interval = null;
+    $('#btnStart').textContent = '开始'; $('#btnStart').classList.remove('running');
+    $('#timerPhaseLabel').textContent = '准备';
+    S.todayDraft = null;
+    showTimerView();
+    updateUI(); save();
+  }
+
+  /* ═══════ INIT ═══════ */
+  function init() {
+    load(); dailyReset(); applyFontScale(); loadTickSound();
+    document.body.setAttribute('data-theme', S.theme);
+    $('#device').setAttribute('data-theme', S.theme);
+
+    const today = getToday();
+    const todayEntries = S.calData[today] || [];
+
+    renderSetupTemplates();
+
+    if (todayEntries.length > 0) {
+      // Load existing plan into draft for review/adjustment
+      S.todayDraft = { name: '日历计划', exercises: todayEntries.map(e => ({...e})) };
+    } else {
+      S.todayDraft = { name: '今日计划', exercises: [] };
+    }
+    showSetupView();
+    updateDisplay(); updateUI();
+    S.allTime.sessions++; S.allTime.lastDate = today;
+    save();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
