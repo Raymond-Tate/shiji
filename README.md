@@ -2,6 +2,8 @@
 
 一款设计精致的健身计时器 Web 应用，模拟机械表盘的交互体验。
 
+![截图](screenshot.png)
+
 ## 功能
 
 - **表盘倒计时**：拟物表盘 UI，红色倒计时环，满圈刻度
@@ -24,8 +26,7 @@ npm install @capacitor/core @capacitor/cli @capacitor/android sharp
 npx cap init "时肌" "com.shiji.timer" --web-dir www
 mkdir www && cp index.html tick.mp3 www/
 npx cap add android
-# 生成图标 PNG
-node -e "const sharp=require('sharp');..." # 详见下文
+# 用 sharp 将 icon.svg 转为各密度 PNG
 npx cap sync android
 cd android && ./gradlew assembleDebug
 ```
@@ -33,9 +34,10 @@ cd android && ./gradlew assembleDebug
 ## 项目结构
 
 ```
-├── index.html    # 主程序（单文件 HTML + CSS + JS）
-├── icon.svg      # 应用图标
-├── tick.mp3      # 走时音效
+├── index.html      # 主程序（单文件 HTML + CSS + JS）
+├── icon.svg        # 应用图标
+├── tick.mp3        # 走时音效
+├── screenshot.png  # 截图
 └── README.md
 ```
 
@@ -49,4 +51,4 @@ cd android && ./gradlew assembleDebug
 
 ## 版本
 
-v6.4 · 2026-06-08
+v6.5 · 2026-06-08

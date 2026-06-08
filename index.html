@@ -1936,9 +1936,11 @@
     S.daily.sets++; S.allTime.sets++;
     S.daily.sec += (S.timerDur - S.remaining); S.allTime.sec += (S.timerDur - S.remaining);
     markTodayExDone();
-    if (S.curSet < S.totalSets) { startRest(); }
+    S.curSet++;
+    if (S.curSet <= S.totalSets) { startRest(); }
     else {
-      S.daily.ex++; S.curSet = 1;
+      S.curSet = 1;
+      S.daily.ex++;
       if (S.activePlan && S.planExIdx < S.activePlan.exercises.length - 1) {
         S.planExIdx++;
         const e = S.activePlan.exercises[S.planExIdx];
