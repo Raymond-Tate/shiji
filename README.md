@@ -6,9 +6,9 @@
 
 | | | |
 |------|------|------|
-| ![1](screenshots/时肌1.jpg) | ![2](时肌2.jpg) | ![3](时肌3.jpg) |
-| ![4](时肌4.jpg) | ![5](时肌5.jpg) | ![6](时肌6.jpg) |
-| ![7](时肌7.jpg) | ![8](时肌8.jpg) | ![9](时肌9.jpg) |
+| ![1](screenshots/screenshots/时肌1.jpg) | ![2](screenshots/时肌2.jpg) | ![3](screenshots/时肌3.jpg) |
+| ![4](screenshots/时肌4.jpg) | ![5](screenshots/时肌5.jpg) | ![6](screenshots/时肌6.jpg) |
+| ![7](screenshots/时肌7.jpg) | ![8](screenshots/时肌8.jpg) | ![9](screenshots/时肌9.jpg) |
 
 ## 功能
 
