@@ -1,5 +1,6 @@
 node_modules/
 android/
 *.apk
+!release/*.apk
 .DS_Store
 Thumbs.db
